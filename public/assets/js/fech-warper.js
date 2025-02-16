@@ -17,9 +17,10 @@ const apiRequest = async (endpoint, method = "GET", body = null) => {
         return await response.json();
     } catch (error) {
         console.error("API request error:", error);
+        return false
     }
 };
 
 // مثال استفاده:
-export const getData = () => apiRequest("/data");
-export const postData = (data) => apiRequest("/data", "POST", data);
+// export const getData = () => apiRequest("/data");
+// export const postData = (data) => apiRequest("/data", "POST", data);

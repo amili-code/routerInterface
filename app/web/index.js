@@ -12,7 +12,7 @@ class Web {
 
     // root(req, res) { this.renderPage(req, res, "root"); }
     root(req, res) { res.render('root')}
-    root(req, res) { res.render('routers')}
+    routers(req, res) { res.render('routers')}
 
 
     login(req, res) { res.render("login", {}); }
