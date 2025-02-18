@@ -1,5 +1,6 @@
 const { sequelize, connectDB } = require('./database');
 const Router = require("../model/Routers")
+const Limitation = require("../model/Limitation")
 
 async function syncDatabase() {
     await connectDB();

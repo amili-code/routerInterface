@@ -1,7 +1,7 @@
 let data = ''
-let createdDataTitle; 
-let createdDataapi; 
-let createdDataId; 
+let createdDataTitle;
+let createdDataapi;
+let createdDataId;
 
 
 async function createTable(title, api, id) {
@@ -47,6 +47,34 @@ function translateFields(fieldsArray) {
                 persianWord = "تاریخ شکل گیری"
                 break;
 
+            case "download":
+                persianWord = "دانلود"
+                break;
+
+            case "upload":
+                persianWord = "میزان آپلود"
+                break;
+
+            case "tx":
+                persianWord = "TX"
+                break;
+
+            case "rx":
+                persianWord = "TX"
+                break;
+
+            case "timeLimit":
+                persianWord = "محدودیت زمانی"
+                break;
+
+            case "routerId":
+                persianWord = "روتر"
+                break;
+            case "routerName":
+                persianWord = "نام روتر"
+                break;
+
+
             default:
                 break;
         }
@@ -72,7 +100,7 @@ function createTrThead(fieldsArray, id) {
     `
 }
 
-function createTrTbody(data, id , api) {
+function createTrTbody(data, id, api) {
     const tr = document.getElementById(`${id}-tbody`)
     tr.innerHTML = ``
     let tbody = '<tr>'
@@ -126,6 +154,33 @@ function translator(data) {
         case "createdAt":
             returnedData = "تاریخ شکل گیری"
             break;
+        case "download":
+            returnedData = "دانلود"
+            break;
+
+        case "upload":
+            returnedData = "میزان آپلود"
+            break;
+
+        case "tx":
+            returnedData = "TX"
+            break;
+
+        case "rx":
+            returnedData = "TX"
+            break;
+
+        case "timeLimit":
+            returnedData = "محدودیت زمانی"
+            break;
+
+        case "routerId":
+            returnedData = "روتر"
+            break;
+        case "routerName":
+            returnedData = "نام روتر"
+            break;
+
 
         default:
             break;
@@ -135,8 +190,7 @@ function translator(data) {
 
 
 function deleteModal(id, name, api) {
-    const modalViewer = document.getElementById("modal-creator");
-
+    const modalViewer = document.getElementById(`modal-creator-${api}`);
     // ساختار HTML مودال
     modalViewer.innerHTML = `
         <div id="modal-overlay" style="
@@ -148,7 +202,7 @@ function deleteModal(id, name, api) {
                 background: white; padding: 20px; border-radius: 10px;
                 width: 300px; text-align: center; box-shadow: 0px 4px 10px rgba(0,0,0,0.2);">
                 
-                <h4 style="margin-bottom: 10px;font-family=peyda">حذف روتر</h4>
+                <h4 style="margin-bottom: 10px;font-family=peyda">عملیات حذف /h4>
                 <p>آیا مطمئن هستید که می‌خواهید "<b>${name}</b>" را حذف کنید؟</p>
                 
                 <div style="margin-top: 20px; display: flex; justify-content: space-between;">
@@ -182,14 +236,14 @@ function deleteModal(id, name, api) {
 }
 
 // تابع حذف (در صورت نیاز جایگزین کنید)
-async function deleteRouter(id , api) {
+async function deleteRouter(id, api) {
     try {
         const response = await apiRequest(`/${api}/${id}`, 'DELETE');
 
         // نمایش پیام موفقیت
         Swal.fire({
-            title: "حذف روتر",
-            text: "روتر با موفقیت حذف شد!",
+            title: " عملیات حذف ",
+            text: "با موفقیت حذف شد!",
             icon: "success",
             confirmButtonText: "متوجه شدم",
             confirmButtonColor: "#d33", // دکمه قرمز
@@ -202,7 +256,7 @@ async function deleteRouter(id , api) {
                 popup: "animate__animated animate__fadeOutUp"
             }
         });
-        createTable(createdDataTitle, createdDataapi, createdDataId)
+        createTable(createdDataTitle, api, `table-${api}`)
     } catch (error) {
         console.error("خطا در حذف روتر:", error);
 
@@ -214,13 +268,14 @@ async function deleteRouter(id , api) {
             confirmButtonText: "متوجه شدم",
             confirmButtonColor: "#d33"
         });
-    }    
+    }
 
 }
 
 
 async function editModal(id, name, api) {
-    console.log(id, name, api, data);
+    console.log(id, name, api);
+    data = await apiRequest(`/${api}`);
 
     // جستجوی آیتم مورد نظر بر اساس ID
     const item = data.find(item => item.id === id);
@@ -233,40 +288,61 @@ async function editModal(id, name, api) {
     const existingModal = document.getElementById("edit-modal");
     if (existingModal) existingModal.remove();
 
+    // فچ کردن داده‌های رابطه‌ای (مثلاً دریافت لیست روترها)
+    let relatedData = {};
+    if (api === "limitation") { // چک کردن اینکه آیا جدول نیاز به داده رابطه‌ای دارد؟
+        relatedData.routers = await apiRequest("/routers"); // دریافت لیست روترها
+    }
+
     // ایجاد فرم داینامیک
     let formFields = "";
-
-    
+    let fieldCount = 0;
 
     for (const key in item) {
         if (key !== "id" && key !== "createdAt" && key !== "updatedAt") { // فیلدهای غیرقابل ویرایش حذف شوند
-            formFields += `
-                <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">${translator(key)}</label>
-                <input type="text" name="${key}" id="edit-${key}" value="${item[key]}" style="width: 100%; padding: 8px; margin-bottom: 10px;">
-            `;
+            if (key === "routerName" && relatedData.routers) {
+                // اگر فیلد رابطه‌ای است، `select` بساز
+                formFields += `
+                    <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">${translator(key)}</label>
+                    <select name="routerId" id="edit-routerId" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                        ${relatedData.routers.map(router => `
+                            <option value="${router.id}" ${router.name === item[key] ? "selected" : ""}>
+                                ${router.name}
+                            </option>
+                        `).join("")}
+                    </select>
+                `;
+            } else {
+                // اگر فیلد معمولی است، `input` بساز
+                formFields += `
+                    <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">${translator(key)}</label>
+                    <input type="text" name="${key}" id="edit-${key}" value="${item[key]}" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                `;
+            }
         }
     }
 
+    const modalWidth = Math.min(400 + fieldCount * 20, 800);
     // ایجاد HTML مودال به‌صورت داینامیک
     const modal = document.createElement("div");
     modal.id = "edit-modal";
     modal.innerHTML = `
-        <div style="
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+      <div style="
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center;
             z-index: 1000;
         ">
             <div style="
-                background: white; padding: 20px; width: 400px; border-radius: 10px; 
-                box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+                background: white; padding: 20px; width: ${modalWidth}px; border-radius: 10px; 
+                box-shadow: 0px 0px 10px rgba(0,0,0,0.2); max-height: 80vh; overflow-y: auto;
             ">
                 <h6 style="margin-bottom: 15px;">ویرایش اطلاعات ${name}</h6>
-                <form id="edit-form">
+                <form id="edit-form" style="display: grid; gap: 10px;">
                     ${formFields}
-                      <input type="submit" value="ثبت تغییرات" class="btn bg-gradient-dark w-100 mb-2">
+                    <input type="submit" value="ثبت تغییرات" class="btn bg-gradient-dark w-100 mb-2">
                 </form>
-                <div style="display: flex; justify-content: space-between;">
-                    <button onclick="closeModal()" class="btn btn-outline-dark  w-100" style="background: gray; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">لغو</button>
+                <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                    <button onclick="closeModal()" class="btn btn-outline-dark w-100" style="background: gray; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">لغو</button>
                 </div>
             </div>
         </div>
@@ -276,18 +352,19 @@ async function editModal(id, name, api) {
     document.body.appendChild(modal);
     document.getElementById("edit-form").addEventListener("submit", function (event) {
         event.preventDefault(); // جلوگیری از ارسال فرم به صورت پیش‌فرض
-    
+
         // دریافت داده‌های فرم
         const formData = new FormData(this);
         const data = Object.fromEntries(formData.entries());
-    
+
         // ارسال داده‌ها
-        editModalFetch(data , id , api);
+        editModalFetch(data, id, api);
     });
 }
 
 
-function editModalFetch(data, id , api) {
+
+function editModalFetch(data, id, api) {
     console.log(api);
     apiRequest(`/${api}/${id}`, "PUT", data);
     Swal.fire({
@@ -305,8 +382,9 @@ function editModalFetch(data, id , api) {
             popup: "animate__animated animate__fadeOutUp"
         }
     });
-    createTable(createdDataTitle, createdDataapi, createdDataId)
+    createTable(createdDataTitle, api, `table-${api}`)
     document.getElementById("edit-form").reset();
+    closeModal()
 }
 
 
