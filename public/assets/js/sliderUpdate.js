@@ -21,7 +21,7 @@ function navUpdate(page) {
 
 
 function sliderClassRestart(page) {
-    let idListest = ["dashboard-title", "routers-title", "limitation-title"]
+    let idListest = ["dashboard-title", "routers-title", "limitation-title", "profile-title"]
     const elem = document.getElementById("get-theme-class")
     idListest.forEach(id => {
 

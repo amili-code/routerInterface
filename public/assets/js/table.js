@@ -73,7 +73,18 @@ function translateFields(fieldsArray) {
             case "routerName":
                 persianWord = "نام روتر"
                 break;
-
+            case "price":
+                persianWord = "قیمت (تومان)"
+                break;
+            case "startDate":
+                persianWord = "تاریخ شروع"
+                break;
+            case "weekDays":
+                persianWord = "بازه زمانی"
+                break;
+            case "limitationName":
+                persianWord = "محدودیت"
+                break;
 
             default:
                 break;
@@ -180,6 +191,18 @@ function translator(data) {
         case "routerName":
             returnedData = "نام روتر"
             break;
+        case "price":
+            returnedData = "قیمت (تومان)"
+            break;
+        case "startDate":
+            returnedData = "تاریخ شروع"
+            break;
+        case "weekDays":
+            returnedData = "بازه زمانی"
+            break;
+        case "limitationName":
+            returnedData = "محدودیت"
+            break;
 
 
         default:
@@ -202,7 +225,7 @@ function deleteModal(id, name, api) {
                 background: white; padding: 20px; border-radius: 10px;
                 width: 300px; text-align: center; box-shadow: 0px 4px 10px rgba(0,0,0,0.2);">
                 
-                <h4 style="margin-bottom: 10px;font-family=peyda">عملیات حذف /h4>
+                <h4 style="margin-bottom: 10px;font-family=peyda">عملیات حذف </h4>
                 <p>آیا مطمئن هستید که می‌خواهید "<b>${name}</b>" را حذف کنید؟</p>
                 
                 <div style="margin-top: 20px; display: flex; justify-content: space-between;">
@@ -288,10 +311,12 @@ async function editModal(id, name, api) {
     const existingModal = document.getElementById("edit-modal");
     if (existingModal) existingModal.remove();
 
-    // فچ کردن داده‌های رابطه‌ای (مثلاً دریافت لیست روترها)
+    // فچ کردن داده‌های رابطه‌ای (مثلاً دریافت لیست روترها یا محدودیت‌ها)
     let relatedData = {};
-    if (api === "limitation") { // چک کردن اینکه آیا جدول نیاز به داده رابطه‌ای دارد؟
-        relatedData.routers = await apiRequest("/routers"); // دریافت لیست روترها
+    if (api === "limitation") {
+        relatedData.routers = await apiRequest("/routers");
+    } else if (api === "profile") {
+        relatedData.limitations = await apiRequest("/limitation"); // دریافت لیست محدودیت‌ها
     }
 
     // ایجاد فرم داینامیک
@@ -299,9 +324,8 @@ async function editModal(id, name, api) {
     let fieldCount = 0;
 
     for (const key in item) {
-        if (key !== "id" && key !== "createdAt" && key !== "updatedAt") { // فیلدهای غیرقابل ویرایش حذف شوند
+        if (key !== "id" && key !== "createdAt" && key !== "updatedAt") {
             if (key === "routerName" && relatedData.routers) {
-                // اگر فیلد رابطه‌ای است، `select` بساز
                 formFields += `
                     <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">${translator(key)}</label>
                     <select name="routerId" id="edit-routerId" style="width: 100%; padding: 8px; margin-bottom: 10px;">
@@ -312,8 +336,26 @@ async function editModal(id, name, api) {
                         `).join("")}
                     </select>
                 `;
+            } else if (key === "limitationName" && relatedData.limitations) {
+                formFields += `
+                    <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">${translator(key)}</label>
+                    <select name="limitationId" id="edit-limitationId" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                        ${relatedData.limitations.map(limitation => `
+                            <option value="${limitation.id}" ${limitation.name === item[key] ? "selected" : ""}>
+                                ${limitation.name}
+                            </option>
+                        `).join("")}
+                    </select>
+                `;
+            } else if (key === "startDate" && api === "profile") {
+                formFields += `
+                    <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">${translator(key)}</label>
+                    <select name="startDate" id="edit-startDate" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                        <option value="first_use" ${item[key] === "از اولین بار" ? "selected" : ""}>از اولین بار</option>
+                        <option value="on_login" ${item[key] === "از موقع ورود" ? "selected" : ""}>از موقع ورود</option>
+                    </select>
+                `;
             } else {
-                // اگر فیلد معمولی است، `input` بساز
                 formFields += `
                     <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">${translator(key)}</label>
                     <input type="text" name="${key}" id="edit-${key}" value="${item[key]}" style="width: 100%; padding: 8px; margin-bottom: 10px;">
@@ -323,7 +365,6 @@ async function editModal(id, name, api) {
     }
 
     const modalWidth = Math.min(400 + fieldCount * 20, 800);
-    // ایجاد HTML مودال به‌صورت داینامیک
     const modal = document.createElement("div");
     modal.id = "edit-modal";
     modal.innerHTML = `
@@ -348,24 +389,22 @@ async function editModal(id, name, api) {
         </div>
     `;
 
-    // اضافه کردن مودال به صفحه
     document.body.appendChild(modal);
     document.getElementById("edit-form").addEventListener("submit", function (event) {
-        event.preventDefault(); // جلوگیری از ارسال فرم به صورت پیش‌فرض
-
-        // دریافت داده‌های فرم
+        event.preventDefault();
         const formData = new FormData(this);
         const data = Object.fromEntries(formData.entries());
-
-        // ارسال داده‌ها
         editModalFetch(data, id, api);
     });
 }
 
 
 
+
 function editModalFetch(data, id, api) {
     console.log(api);
+    console.log(data);
+
     apiRequest(`/${api}/${id}`, "PUT", data);
     Swal.fire({
         title: "اطلاعات به درستی اپدیت شدند!",

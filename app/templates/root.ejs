@@ -7,6 +7,7 @@
       document.getElementById("dashboard").style.display = "none"
       document.getElementById("routers").style.display = "none"
       document.getElementById("limitation").style.display = "none"
+      document.getElementById("profile").style.display = "none"
     }
 
 
@@ -33,7 +34,15 @@
           displayNone()
           document.getElementById("limitation").style.display = "block"
           break;
-      
+          
+          case "profile":
+            navUpdate("پروفایل ها")
+            sliderUpdate("profile")
+            displayNone()
+            document.getElementById("profile").style.display = "block"
+            break;
+
+
         default:
           navUpdate("داشبورد")
           sliderUpdate("dashboard")
@@ -52,6 +61,9 @@
   </div>
   <div id="limitation" style="display: none;">
     <%- include('./limitation'); %>
+  </div>
+  <div id="profile" style="display: none;">
+    <%- include('./profile'); %>
   </div>
   
 
