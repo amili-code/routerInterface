@@ -24,6 +24,7 @@ const profileController = require("app/api/profile");
 router.get('/routers', routerController.getAll.bind(routerController))
 router.post('/routers', routerController.create.bind(routerController))
 router.get('/routers/:id', routerController.getOne.bind(routerController))
+router.get('/routers-connection/:id', routerController.connection.bind(routerController))
 router.put('/routers/:id', routerController.update.bind(routerController))
 router.delete('/routers/:id', routerController.delete.bind(routerController))
 

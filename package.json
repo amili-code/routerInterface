@@ -34,6 +34,7 @@
     "jalaali-js": "^1.2.7",
     "moment-hijri": "^3.0.0",
     "moment-jalaali": "^0.10.4",
+    "node-ssh": "^13.2.0",
     "sequelize": "^6.37.5"
   }
 }
