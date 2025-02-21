@@ -1,0 +1,42 @@
+ساخت پروفایل 
+user-manager/profile/add name=prof12 price=0 starts-when=fi
+rst-auth validity=unlimited
+حذف پروفایل 
+user-manager profile remove [find name="prof1"] 
+
+
+ساخت محدودیت 
+user-manager/limitation/add download-limit=2G upload-limit=
+2G name=12 rate-limit-tx=2M rate-limit-rx=2M uptime-limit=2d 
+انتساب محدودیت به پروفایل 
+user-manager/profile-limitation/add profile=prof12 limitati
+on=12 weekdays=saturday 
+
+حذف محدودیت 
+user-manager limitation/remove [find name="lim1"]
+
+
+
+
+ساخت کاربری
+user-manager/user/add name=m password=65464 shared-users=5
+انتساب به پروفایل 
+user-manager/user-profile/add user=m profile=prof12
+
+
+
+نام کاربری کاربران فعال 
+user-manager session print without-paging where active=yes columns=user
+
+مدت زمان و روشن بودن کاربر ما 
+user-manager session print where user="USERNAME" columns=user,start-time,uptime
+
+
+غیر فعال یک کاربر
+user-manager user set [find name="john_doe"] disabled=yes
+فعال کردن یک کاربر 
+ user-manager user set [find name="m"] disabled=no 
+
+حذف نام کاربری 
+user-manager user remove [find name="USERNAME"] 
+

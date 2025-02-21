@@ -137,7 +137,7 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="row" id="connectionRuter">
+            <div class="row container-fluid" id="connectionRuter">
 
             </div>
           </div>
@@ -223,8 +223,8 @@
 
   <script>
       async function createConnectionRuter(){
-        
         const routeres = await apiRequest("/routers");
+        document.getElementById("connectionRuter").innerHTML = ""
         routeres.forEach(rout => {
           document.getElementById("connectionRuter").innerHTML += `
             <div class="col-lg-3 col-sm-6 mb-lg-0 mb-4" >
@@ -240,7 +240,7 @@
             </div>
             <hr class="dark horizontal my-0">
             <div class="card-footer p-3">
-              <p class="mb-0 text-start"><span class="text-success text-sm font-weight-bolder ms-1"></span>نمایش نتیجه</p>
+              <p class="mb-0 text-start" id="connecting-${rout.id}">نمایش نتیجه</p>
             </div>
           </div>
           </div>
@@ -249,11 +249,22 @@
 
       }
 
+      
       createConnectionRuter()
 
 
       async function checkConnection(routId){
-      const res = await apiRequest(`/routers-connection/${routId}`);
-        console.log(res);
+        document.getElementById("modalLoading").style.display = "block"
+        const res = await apiRequest(`/routers-connection/${routId}`);
+        if(res){
+          document.getElementById(`connecting-${routId}`).innerHTML=`<span class="text-success text-sm font-weight-bolder ms-1" >ارتباط به خوبی برقرار است</span>`
+        }else{
+          document.getElementById(`connecting-${routId}`).innerHTML=`<span class="text-danger text-sm font-weight-bolder ms-1" >ارتباط با این روتر دچار مشکل شده است</span>`
+        }
+        document.getElementById("modalLoading").style.display = "none"
+
+        setTimeout(() => {
+          createConnectionRuter()
+        }, 10000);
       }
     </script>

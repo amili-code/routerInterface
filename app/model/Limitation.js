@@ -10,6 +10,7 @@ const Limitation = sequelize.define('Limitation', {
     },
     name: {
         type: DataTypes.STRING,
+        unique:true,
         allowNull: false,
         validate: {
             notEmpty: { msg: "نام نمی‌تواند خالی باشد" },
@@ -44,11 +45,10 @@ const Limitation = sequelize.define('Limitation', {
         },
     },
     timeLimit: {
-        type: DataTypes.INTEGER, // بر حسب دقیقه
+        type: DataTypes.STRING,
         allowNull: false,
         validate: {
-            isInt: { msg: "محدودیت زمانی باید عدد باشد" },
-            min: { args: [1], msg: "حداقل مقدار باید 1 دقیقه باشد" },
+            notEmpty: { msg: "بازه زمانی نمی‌تواند خالی باشد" },
         },
     },
     routerId: {

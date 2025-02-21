@@ -29,6 +29,7 @@ router.put('/routers/:id', routerController.update.bind(routerController))
 router.delete('/routers/:id', routerController.delete.bind(routerController))
 
 router.get('/limitation', limitationController.getAll.bind(limitationController))
+router.get('/limitation-router', limitationController.getAllRouter.bind(limitationController))
 router.post('/limitation', limitationController.create.bind(limitationController))
 router.get('/limitation/:id', limitationController.getOne.bind(limitationController))
 router.put('/limitation/:id', limitationController.update.bind(limitationController))

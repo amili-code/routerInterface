@@ -11,6 +11,7 @@ const Profile = sequelize.define('Profile', {
     name: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique:true,
         validate: {
             notEmpty: { msg: "نام نمی‌تواند خالی باشد" },
         },

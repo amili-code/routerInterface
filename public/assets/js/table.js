@@ -395,6 +395,9 @@ async function editModal(id, name, api) {
         const formData = new FormData(this);
         const data = Object.fromEntries(formData.entries());
         editModalFetch(data, id, api);
+        setTimeout(() => {
+            createTable(createdDataTitle, api, `table-${api}`)
+        }, 3000);
     });
 }
 
@@ -404,7 +407,6 @@ async function editModal(id, name, api) {
 function editModalFetch(data, id, api) {
     console.log(api);
     console.log(data);
-
     apiRequest(`/${api}/${id}`, "PUT", data);
     Swal.fire({
         title: "اطلاعات به درستی اپدیت شدند!",
@@ -421,7 +423,6 @@ function editModalFetch(data, id, api) {
             popup: "animate__animated animate__fadeOutUp"
         }
     });
-    createTable(createdDataTitle, api, `table-${api}`)
     document.getElementById("edit-form").reset();
     closeModal()
 }

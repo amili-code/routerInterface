@@ -21,25 +21,26 @@ class routerController {
     }
 
     async connection(req, res) {
-        try {
-            console.log(req.params.id);
-            const router = await Router.findByPk(req.params.id);
+    try {
+        console.log(req.params.id);
+        const router = await Router.findByPk(req.params.id);
 
-            if (!router) {
-                return res.status(404).json({ message: "روتر پیدا نشد" });
-            }
-
-            // دستور ساده‌ای مثل "uptime" رو تست می‌کنیم که نشون بده اتصال موفق بوده
-            const response = await executeCommand(router, '/ip/address/print');
-
-            res.status(200).json({ message: "اتصال موفق!", output: response });
-        } catch (error) {
-            res.status(500).json({ message: "اتصال ناموفق", error: error.message });
+        if (!router) {
+            return res.status(404).json({ message: "روتر پیدا نشد" });
         }
+
+        // تست اتصال با دستور ساده
+        const response = await executeCommand(router, '/ip/address/print');
+
+        res.status(200).json({ message: "اتصال موفق!", output: response });
+    } catch (error) {
+        res.status(500).json({ message: "اتصال ناموفق", error: error.message });
+    }
     }
 
     async getOne(req, res) {
         try {
+            console.log(req.params.id);
             const router = await Router.findByPk(req.params.id);
             if (!router) return res.status(404).json({ error: "روتر پیدا نشد" });
             res.status(200).json(router);

@@ -1,33 +1,37 @@
-const { NodeSSH } = require('node-ssh');
-
-const ssh = new NodeSSH();
+const { NodeSSH } = require("node-ssh");
 
 /**
  * اتصال به روتر و اجرای یک دستور
  * @param {Object} router - اطلاعات روتر شامل ip، port، username، password
  * @param {string} command - دستوری که می‌خواهی روی روتر اجرا کنی
- * @returns {Promise<string>} - خروجی دستور اجرا شده
+ * @returns {Promise<string|null>} - خروجی دستور اجرا شده یا null در صورت خطا
  */
 async function executeCommand(router, command) {
+    const ssh = new NodeSSH(); // هر بار یک شیء جدید ایجاد کن
+
     try {
-        // اتصال به روتر
+        console.log(`Connecting to ${router.ip}:${router.port} as ${router.username}...`);
+
         await ssh.connect({
             host: router.ip,
-            port: router.port || 22,
+            port: router.port,
             username: router.username,
             password: router.password,
         });
 
         // اجرای دستور روی روتر
         const result = await ssh.execCommand(command);
+        ssh.dispose(); // قطع اتصال
+        console.log(result);
+        if (result.stderr) {
+            console.error(`Error executing command on ${router.ip}: ${result.stderr}`);
+            return null;
+        }
 
-        // قطع اتصال
-        ssh.dispose();
-
-        return result.stdout || result.stderr;
+        return result.stdout.trim(); // حذف فضای اضافی و بازگشت مقدار مناسب
     } catch (error) {
-        console.error("خطا در اتصال به روتر:", error);
-        throw new Error("اتصال به روتر ناموفق بود.");
+        console.error(`Failed to execute command on ${router.ip}: ${error.message}`);
+        return null; // مقدار null برگردان تا در لیست پردازش به‌درستی هندل شود
     }
 }
 
