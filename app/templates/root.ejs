@@ -8,6 +8,7 @@
       document.getElementById("routers").style.display = "none"
       document.getElementById("limitation").style.display = "none"
       document.getElementById("profile").style.display = "none"
+      document.getElementById("client").style.display = "none"
     }
 
 
@@ -41,7 +42,13 @@
             displayNone()
             document.getElementById("profile").style.display = "block"
             break;
-
+            
+            case "client":
+              navUpdate("کاربران")
+              sliderUpdate("client")
+              displayNone()
+              document.getElementById("client").style.display = "block"
+              break;
 
         default:
           navUpdate("داشبورد")
@@ -64,6 +71,9 @@
   </div>
   <div id="profile" style="display: none;">
     <%- include('./profile'); %>
+  </div>
+  <div id="client" style="display: none;">
+    <%- include('./client'); %>
   </div>
   
 

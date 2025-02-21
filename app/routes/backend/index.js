@@ -11,6 +11,7 @@ const activityLogger = require("../../middlewares/userLogger")
 const routerController = require("app/api/routers");
 const limitationController = require("app/api/limitation");
 const profileController = require("app/api/profile");
+const clientController = require("app/api/client");
 
 
 
@@ -40,6 +41,12 @@ router.post('/profile', profileController.create.bind(profileController))
 router.get('/profile/:id', profileController.getOne.bind(profileController))
 router.put('/profile/:id', profileController.update.bind(profileController))
 router.delete('/profile/:id', profileController.delete.bind(profileController))
+
+router.get('/client', clientController.getAll.bind(clientController))
+router.post('/client', clientController.create.bind(clientController))
+router.get('/client/:id', clientController.getOne.bind(clientController))
+router.put('/client/:id', clientController.update.bind(clientController))
+router.delete('/client/:id', clientController.delete.bind(clientController))
 
 
 module.exports = router;

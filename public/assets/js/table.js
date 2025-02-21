@@ -6,6 +6,7 @@ let createdDataId;
 
 async function createTable(title, api, id) {
     try {
+        console.log(api);
         const getData = await apiRequest(`/${api}`);
         const table = document.getElementById(`${id}`)
         const fieldsArray = Object.keys(getData[0]).filter(key => key !== "updatedAt" && key !== "id");
@@ -89,6 +90,24 @@ function translateFields(fieldsArray) {
                 break;
             case "limitationName":
                 persianWord = "محدودیت"
+                break;
+            case "Clientname":
+                persianWord = "نام"
+                break;
+            case "fullName":
+                persianWord = "نام کاربری"
+                break;
+            case "roomNumber":
+                persianWord = "شماره اتاق"
+                break;
+            case "ClientCount":
+                persianWord = "تعداد مصرف کننده"
+                break;
+            case "profileName":
+                persianWord = "پروفایل انتخابی"
+                break;
+            case "profilePrice":
+                persianWord = "قیمت پرفایل"
                 break;
 
             default:
@@ -208,7 +227,24 @@ function translator(data) {
         case "limitationName":
             returnedData = "محدودیت"
             break;
-
+        case "Clientname":
+            returnedData = "نام"
+            break;
+        case "fullName":
+            returnedData = "نام کاربری"
+            break;
+        case "roomNumber":
+            returnedData = "شماره اتاق"
+            break;
+        case "ClientCount":
+            returnedData = "تعداد مصرف کننده"
+            break;
+        case "profileName":
+            returnedData = "پروفایل انتخابی"
+            break;
+        case "profilePrice":
+            returnedData = "قیمت پرفایل"
+            break;
 
         default:
             break;
@@ -289,12 +325,12 @@ async function deleteRouter(id, api) {
             }
         });
     } catch (error) {
-        console.error("خطا در حذف روتر:", error);
+        console.error("خطا در حذف :", error);
 
         // نمایش پیام خطا در صورت عدم موفقیت
         Swal.fire({
             title: "خطا!",
-            text: "حذف روتر با مشکل مواجه شد.",
+            text: "حذف  با مشکل مواجه شد.",
             icon: "error",
             confirmButtonText: "متوجه شدم",
             confirmButtonColor: "#d33"
@@ -325,6 +361,8 @@ async function editModal(id, name, api) {
         relatedData.routers = await apiRequest("/routers");
     } else if (api === "profile") {
         relatedData.limitations = await apiRequest("/limitation"); // دریافت لیست محدودیت‌ها
+    } else if (api === "client") {
+        relatedData.profile = await apiRequest("/profile"); // دریافت لیست محدودیت‌ها
     }
 
     // ایجاد فرم داینامیک
@@ -363,6 +401,17 @@ async function editModal(id, name, api) {
                         <option value="on_login" ${item[key] === "از موقع ورود" ? "selected" : ""}>از موقع ورود</option>
                     </select>
                 `;
+            } else if (key === "profileName" && relatedData.profile){
+                formFields += `
+                    <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">${translator(key)}</label>
+                    <select name="profileId" id="edit-limitationId" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                        ${relatedData.profile.map(prof => `
+                            <option value="${prof.id}" ${prof.name === item[key] ? "selected" : ""}>
+                                ${prof.name}
+                            </option>
+                        `).join("")}
+                    </select>
+                `
             } else {
                 formFields += `
                     <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">${translator(key)}</label>
@@ -418,7 +467,7 @@ function editModalFetch(data, id, api) {
     apiRequest(`/${api}/${id}`, "PUT", data);
     Swal.fire({
         title: "اطلاعات به درستی اپدیت شدند!",
-        text: `روتر "${data.name}" با موفقیت ثبت شد.`,
+        text: `ایتم "${data.name}" با موفقیت ثبت شد.`,
         icon: "success",
         confirmButtonText: "متوجه شدم",
         confirmButtonColor: '#43A047',

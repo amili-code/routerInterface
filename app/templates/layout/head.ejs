@@ -135,7 +135,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-dark" href="../pages/rtl.html">
+          <a class="nav-link text-dark" id="client-title" href="#client">
             <i class="material-symbols-rounded opacity-10">format_textdirection_r_to_l</i>
             <span class="nav-link-text me-1">کاربران</span>
           </a>
@@ -205,8 +205,13 @@
             <script>
               function updateInformation(){
                 createTable("جدول محدودیت ها" , "limitation" , "table-limitation")
+                createInputLimitationForm()
                 createTable("جدول پروفایل ها" , "profile" , "table-profile")
+                createInputProfileForm()
                 createTable("جدول روترها" , "routers" , "table-routers")
+                createTable("جدول پروفایل ها" , "client" , "table-client")
+                createInputClientForm()
+
               }
             </script>
             <!-- <li class="mt-1">

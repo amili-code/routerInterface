@@ -50,15 +50,19 @@ class ProfileController {
             }
 
             // اجرای دستور افزودن پروفایل روی روتر
+            const relatedCommand = `user-manager/profile-limitation/add profile=${name} limitation=${limitation.name} weekdays=saturday,sunday,monday,tuesday,wednesday,thursday,friday`
             const fCommand = `user-manager/profile/add name=${name} price=${price} starts-when=${starts} validity=unlimited`
 
-            const command = `user-manager/profile/add name=${name} price=${price} start-date=${startDate} days-of-week=${weekDays} limitation=${limitation.name}`;
+            console.log(relatedCommand);
+            console.log(fCommand);
+
             const response = await executeCommand(router, fCommand);
+            const relatedResponse = await executeCommand(router, relatedCommand);
             // if (!response) throw new Error("خطا در افزودن پروفایل روی روتر");
 
             const profile = await Profile.create(req.body);
             // ذخیره در دیتابیس بعد از موفقیت در روتر
-            res.status(201).json(profile);
+            res.status(200).json(profile);
         } catch (error) {
             res.status(400).json({ error: error.message });
         }
@@ -92,10 +96,20 @@ class ProfileController {
             } else {
                 starts = "assigned"
             }
+
+            if (profile.limitationId != limitationId) {
+                const relatedCommand = `user-manager/profile-limitation/remove [find profile=${profile.name}]`
+                const deleteCommand = await executeCommand(router, relatedCommand) 
+                const createCommand = `user-manager/profile-limitation/add profile=${name} limitation=${limitation.name} weekdays=saturday,sunday,monday,tuesday,wednesday,thursday,friday`
+                const confirmCommand = await executeCommand(router, createCommand) 
+                console.log(deleteCommand);
+                console.log(confirmCommand);
+            }
+            
             // اجرای دستور برای ویرایش پروفایل روی روتر
             const command = `user-manager/profile/set [find name="${profile.name}"] name=${name} price=${price} starts-when=${starts} validity=unlimited`;
             const response = await executeCommand(router, command);
-
+            
             // بروزرسانی دیتابیس در صورت موفقیت
             await profile.update(req.body);
             res.status(200).json(profile);
@@ -117,8 +131,11 @@ class ProfileController {
 
             // حذف پروفایل از روتر
             const command = `user-manager/profile/remove [find name="${profile.name}"]`;
+            const relatedCommand = `user-manager/profile-limitation/remove [find profile=${profile.name}]`;
+           
+            const relatedResponse = await executeCommand(router, relatedCommand);
             const response = await executeCommand(router, command);
-
+            console.log(command , relatedCommand);
             // حذف از دیتابیس در صورت موفقیت
             await profile.destroy();
             res.status(200).json({ message: "پروفایل حذف شد" });

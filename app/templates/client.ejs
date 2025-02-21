@@ -1,0 +1,274 @@
+
+<div class="container-fluid py-2">
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div
+                    class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div
+                        class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
+                        <h6 class="text-white text-capitalize ps-1 m-2">جدول
+                            کاربران</h6>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div>
+                        <form class="form row container-fluid"
+                            id="clientForm">
+                            <h6>ثبت کاربر جدید</h6>
+                            <div
+                                class="col input-group input-group-outline my-3">
+                                <label
+                                    class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">نام</label>
+                                <input type="text" name="name"
+                                    class="form-control" id="nameInputer">
+                                <small id="errorMsgee"
+                                    style="color: red; display: none;">فقط حروف
+                                    انگلیسی مجاز است</small>
+
+                                <script>
+                                document.getElementById("nameInputer").addEventListener("input", function() {
+                                    const regex = /^[A-Za-z0-9\s]*$/;
+                                    const errorMsg = document.getElementById("errorMsgee");
+
+                                    if (!regex.test(this.value)) {
+                                        errorMsg.style.display = "inline";
+                                        this.value = this.value.replace(/[^A-Za-z\s]/g, ""); // حذف کاراکترهای غیرمجاز
+                                    } else {
+                                        errorMsg.style.display = "none";
+                                    }
+                                });
+                                </script>
+                            </div>
+                            <div
+                                class="col input-group input-group-outline my-3">
+                                <label
+                                    class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">رمزعبور</label>
+                                <input type="text" name="password"
+                                    class="form-control">
+                            </div>
+                            <div
+                                class="col input-group input-group-outline my-3">
+                                <label
+                                    class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">نام کاربری</label>
+                                <input type="text" name="fullName"
+                                    class="form-control">
+                            </div>
+                            <div
+                                class="col input-group input-group-outline my-3">
+                                <label
+                                    class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">شماره اتاق</label>
+                                <input type="number" name="roomNumber"
+                                    class="form-control">
+                            </div>
+                            <div
+                                class="col input-group input-group-outline my-3">
+                                <label
+                                    class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">تعداد کاربران</label>
+                                <input type="number" name="ClientCount"
+                                    class="form-control">
+                            </div>
+                           
+                            <div
+                                class="col input-group input-group-outline my-3"
+                                id="ProfileInput">
+
+                            </div>
+
+                            <div
+                                class="col input-group input-group-outline my-3">
+                                <input type="submit" value="افزودن کاربر"
+                                    class="btn bg-gradient-dark w-100 mb-2">
+                            </div>
+                        </form>
+                        <hr>
+                    </div>
+                    <div class="table-responsive p-0">
+                        <table class="table align-items-center mb-0"
+                            id="table-client">
+                            <thead>
+                                <tr id="table-client-tr">
+                                    <!-- <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Author</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Function</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Employed</th>
+                      <th class="text-secondary opacity-7"></th>
+                    </tr> -->
+                                </thead>
+                                <tbody id="table-client-tbody">
+                                    <!-- <tr >
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div>
+                            <img src="../assets/img/team-2.jpg" class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
+                          </div>
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">John Michael</h6>
+                            <p class="text-xs text-secondary mb-0">john@creative-tim.com</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">Manager</p>
+                        <p class="text-xs text-secondary mb-0">Organization</p>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                        <span class="badge badge-sm bg-gradient-success">Online</span>
+                      </td>
+                      <td class="align-middle text-center">
+                        <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
+                      </td>
+                      <td class="align-middle">
+                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                          Edit
+                        </a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div>
+                            <img src="../assets/img/team-3.jpg" class="avatar avatar-sm me-3 border-radius-lg" alt="user2">
+                          </div>
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">Alexa Liras</h6>
+                            <p class="text-xs text-secondary mb-0">alexa@creative-tim.com</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">Programator</p>
+                        <p class="text-xs text-secondary mb-0">Developer</p>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                        <span class="badge badge-sm bg-gradient-secondary">Offline</span>
+                      </td>
+                      <td class="align-middle text-center">
+                        <span class="text-secondary text-xs font-weight-bold">11/01/19</span>
+                      </td>
+                      <td class="align-middle">
+                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                          Edit
+                        </a>
+                      </td>
+                    </tr> -->
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-creator-client"></div>
+        <footer class="footer py-4  ">
+            <div class="container-fluid">
+                <div class="row align-items-center justify-content-lg-between">
+                    <div class="col-lg-6 mb-lg-0 mb-4">
+                        <div
+                            class="copyright text-center text-sm text-muted text-lg-end">
+                            © <script>
+                  document.write(new Date().getFullYear())
+                </script>,
+                            ساخته شده <i class="fa fa-heart"></i> توسط
+                            <a href="https://www.github.com/amili-code"
+                                class="font-weight-bold"
+                                target="_blank">amili-code</a>
+                            برای مدیریت اسان تر
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <ul
+                            class="nav nav-footer justify-content-center justify-content-lg-end">
+                            <li class="nav-item">
+                                <a href="https://www.creative-tim.com"
+                                    class="nav-link text-muted"
+                                    target="_blank">درباره ما</a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    href="https://www.creative-tim.com/presentation"
+                                    class="nav-link text-muted"
+                                    target="_blank">درباره نرم افزار</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://www.creative-tim.com/blog"
+                                    class="nav-link text-muted"
+                                    target="_blank">یادگیری</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://amili-code.github.io"
+                                    class="nav-link pe-0 text-muted"
+                                    target="_blank">من</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script> 
+    async function createInputClientForm(){
+        let profile = await apiRequest("/profile");
+
+        document.getElementById("ProfileInput").innerHTML=`
+                    <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">پروفایل ها </label>
+                    <select name="profileId" id="edit-profileId" style="width: 100%; padding: 8px;">
+                        <option value="" disabled selected hidden></option>
+                        ${profile.map(prof => `
+                            <option value="${prof.id}">
+                                ${prof.name}
+                            </option>
+                        `).join("")}
+                    </select>
+        `
+    }
+        
+    createInputClientForm()
+    createTable("جدول پروفایل ها" , "client" , "table-client")
+       document.getElementById("clientForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // جلوگیری از ارسال فرم به صورت پیش‌فرض
+
+        // دریافت داده‌های فرم
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        // ارسال داده‌ها
+        createclient(data);
+        setTimeout(() => {
+            createTable("جدول پروفایل ها" , "client" , "table-client")
+        }, 4000);
+    });
+
+    async function createclient(data) {
+     const response =await apiRequest("/client", "POST", data);
+     if (response) {
+        Swal.fire({
+            title: "کاربر ثبت شد!",
+            text: `کاربر جدید با موفقیت ثبت شد.`,
+            icon: "success",
+            confirmButtonText: "متوجه شدم",
+            confirmButtonColor:'#43A047',
+            timer: 3000,
+            timerProgressBar: true,
+            showClass: {
+                popup: "animate__animated animate__fadeInDown"
+            },
+            hideClass: {
+                popup: "animate__animated animate__fadeOutUp"
+            }
+        });
+        document.getElementById("clientForm").reset();
+     } else{
+         Swal.fire({
+                title: "خطا!",
+                text: "افزودن کاربر با مشکل مواجه شد.",
+                icon: "error",
+                confirmButtonText: "متوجه شدم",
+                confirmButtonColor: "#d33"
+            });
+     }
+    }
+    </script>
