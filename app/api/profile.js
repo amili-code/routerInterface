@@ -1,5 +1,7 @@
 const Limitation = require("../model/Limitation");
 const Profile = require("../model/Profile");
+const Router = require("../model/Routers");
+const { executeCommand } = require('../command/routerCommand');
 
 
 class ProfileController {
@@ -32,7 +34,30 @@ class ProfileController {
 
     async create(req, res) {
         try {
+            const { name, price, startDate, weekDays, limitationId } = req.body;
+            const limitation = await Limitation.findByPk(limitationId, { include: Router });
+            if (!limitation) return res.status(404).json({ error: "محدودیت پیدا نشد" });
+
+            const router = limitation.Router;
+            if (!router) return res.status(404).json({ error: "روتر مرتبط پیدا نشد" });
+
+            let starts = ""
+
+            if (startDate != "first_use") {
+                starts = "first-auth"
+            } else {
+                starts = "assigned"
+            }
+
+            // اجرای دستور افزودن پروفایل روی روتر
+            const fCommand = `user-manager/profile/add name=${name} price=${price} starts-when=${starts} validity=unlimited`
+
+            const command = `user-manager/profile/add name=${name} price=${price} start-date=${startDate} days-of-week=${weekDays} limitation=${limitation.name}`;
+            const response = await executeCommand(router, fCommand);
+            // if (!response) throw new Error("خطا در افزودن پروفایل روی روتر");
+
             const profile = await Profile.create(req.body);
+            // ذخیره در دیتابیس بعد از موفقیت در روتر
             res.status(201).json(profile);
         } catch (error) {
             res.status(400).json({ error: error.message });
@@ -51,9 +76,27 @@ class ProfileController {
 
     async update(req, res) {
         try {
-            const profile = await Profile.findByPk(req.params.id);
+            const profile = await Profile.findByPk(req.params.id, { include: Limitation });
             if (!profile) return res.status(404).json({ error: "پروفایل پیدا نشد" });
 
+            const { name, price, startDate, weekDays, limitationId } = req.body;
+            const limitation = await Limitation.findByPk(limitationId, { include: Router });
+            if (!limitation) return res.status(404).json({ error: "محدودیت پیدا نشد" });
+
+            const router = limitation.Router;
+            if (!router) return res.status(404).json({ error: "روتر مرتبط پیدا نشد" });
+            let starts = ""
+
+            if (startDate != "first_use") {
+                starts = "first-auth"
+            } else {
+                starts = "assigned"
+            }
+            // اجرای دستور برای ویرایش پروفایل روی روتر
+            const command = `user-manager/profile/set [find name="${profile.name}"] name=${name} price=${price} starts-when=${starts} validity=unlimited`;
+            const response = await executeCommand(router, command);
+
+            // بروزرسانی دیتابیس در صورت موفقیت
             await profile.update(req.body);
             res.status(200).json(profile);
         } catch (error) {
@@ -63,9 +106,20 @@ class ProfileController {
 
     async delete(req, res) {
         try {
-            const profile = await Profile.findByPk(req.params.id);
+            const profile = await Profile.findByPk(req.params.id, { include: Limitation });
             if (!profile) return res.status(404).json({ error: "پروفایل پیدا نشد" });
 
+            const limitation = await Limitation.findByPk(profile.limitationId, { include: Router });
+            if (!limitation) return res.status(404).json({ error: "محدودیت پیدا نشد" });
+
+            const router = limitation.Router;
+            if (!router) return res.status(404).json({ error: "روتر مرتبط پیدا نشد" });
+
+            // حذف پروفایل از روتر
+            const command = `user-manager/profile/remove [find name="${profile.name}"]`;
+            const response = await executeCommand(router, command);
+
+            // حذف از دیتابیس در صورت موفقیت
             await profile.destroy();
             res.status(200).json({ message: "پروفایل حذف شد" });
         } catch (error) {

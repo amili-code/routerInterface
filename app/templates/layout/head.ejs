@@ -200,8 +200,15 @@
           </div>
           <ul class="navbar-nav d-flex align-items-center me-auto ms-0 justify-content-end">
             <li class="nav-item d-flex align-items-center">
-              <a class="btn btn-outline-primary btn-sm mb-0 ms-3" target="_blank">یادگیری</a>
+              <a class="btn btn-outline-primary btn-sm mb-0 ms-3" onclick="updateInformation()" >بروزرسانی اطلاعات</a>
             </li>
+            <script>
+              function updateInformation(){
+                createTable("جدول محدودیت ها" , "limitation" , "table-limitation")
+                createTable("جدول پروفایل ها" , "profile" , "table-profile")
+                createTable("جدول روترها" , "routers" , "table-routers")
+              }
+            </script>
             <!-- <li class="mt-1">
               <a class="github-button" href="https://github.com/amili-code" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star creativetimofficial/material-dashboard on GitHub">Star</a>
             </li> -->

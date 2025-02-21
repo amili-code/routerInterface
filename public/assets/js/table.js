@@ -5,16 +5,21 @@ let createdDataId;
 
 
 async function createTable(title, api, id) {
-    const getData = await apiRequest(`/${api}`);
-    const table = document.getElementById(`${id}`)
-    const fieldsArray = Object.keys(getData[0]).filter(key => key !== "updatedAt" && key !== "id");
-    const persianArrey = translateFields(fieldsArray)
-    createTrThead(persianArrey, id)
-    createTrTbody(getData, id, api)
-    data = await getData
-    createdDataTitle = await title
-    createdDataapi = await api
-    createdDataId = await id
+    try {
+        const getData = await apiRequest(`/${api}`);
+        const table = document.getElementById(`${id}`)
+        const fieldsArray = Object.keys(getData[0]).filter(key => key !== "updatedAt" && key !== "id");
+        const persianArrey = translateFields(fieldsArray)
+        createTrThead(persianArrey, id)
+        createTrTbody(getData, id, api)
+        data = await getData
+        createdDataTitle = await title
+        createdDataapi = await api
+        createdDataId = await id
+    } catch (error) {
+        console.log(title , api, table);
+        console.log(error);
+    }
 }
 
 function translateFields(fieldsArray) {
@@ -243,7 +248,11 @@ function deleteModal(id, name, api) {
 
     // دریافت دکمه‌ها
     document.getElementById("confirm-delete").addEventListener("click", function () {
-        deleteRouter(id, api);  // تابع حذف را اجرا می‌کند
+        deleteRouter(id, api);
+        // تابع حذف را اجرا می‌کند
+        setTimeout(() => {
+            createTable(createdDataTitle, api, `table-${api}`)
+        }, 4000);
         closeModal();
     });
 
@@ -279,7 +288,6 @@ async function deleteRouter(id, api) {
                 popup: "animate__animated animate__fadeOutUp"
             }
         });
-        createTable(createdDataTitle, api, `table-${api}`)
     } catch (error) {
         console.error("خطا در حذف روتر:", error);
 

@@ -21,8 +21,11 @@
                                 class="col input-group input-group-outline my-3">
                                 <label
                                     class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">نام</label>
-                                <input type="text" name="name" class="form-control" id="nameInpute">
-                                <small id="errorMsge" style="color: red; display: none;">فقط حروف انگلیسی مجاز است</small>
+                                <input type="text" name="name"
+                                    class="form-control" id="nameInpute">
+                                <small id="errorMsge"
+                                    style="color: red; display: none;">فقط حروف
+                                    انگلیسی مجاز است</small>
 
                                 <script>
                                 document.getElementById("nameInpute").addEventListener("input", function() {
@@ -48,17 +51,24 @@
                             <div
                                 class="col input-group input-group-outline my-3">
                                 <label
-                                    class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">بازه زمانی</label>
+                                    class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">بازه
+                                    زمانی</label>
                                 <input type="text" name="weekDays"
                                     class="form-control">
                             </div>
                             <div
                                 class="col input-group input-group-outline my-3">
-                                <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">تاریخ شروع بازه</label>
-                                <select  name="startDate" id="edit-startDate" style="width: 100%; padding: 8px;" >
-                                    <option value="" disabled selected hidden></option>
-                                    <option value="first_use">از اولین بار</option>
-                                    <option value="on_login" >از موقع ورود</option>
+                                <label
+                                    class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">تاریخ
+                                    شروع بازه</label>
+                                <select name="startDate" id="edit-startDate"
+                                    style="width: 100%; padding: 8px;">
+                                    <option value disabled selected
+                                        hidden></option>
+                                    <option value="first_use">از اولین
+                                        بار</option>
+                                    <option value="on_login">از موقع
+                                        ورود</option>
                                 </select>
                             </div>
                             <div
@@ -152,7 +162,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div id="modal-creator-profile"></div>
         <footer class="footer py-4  ">
             <div class="container-fluid">
@@ -229,11 +239,15 @@
 
         // ارسال داده‌ها
         createprofile(data);
+        setTimeout(() => {
+            createTable("جدول پروفایل ها" , "profile" , "table-profile")
+        }, 4000);
     });
 
-    function createprofile(data) {
-      apiRequest("/profile", "POST", data);
-      Swal.fire({
+    async function createprofile(data) {
+     const response =await apiRequest("/profile", "POST", data);
+     if (response) {
+        Swal.fire({
             title: "پروفایل ثبت شد!",
             text: `پروفایل "${data.name}" با موفقیت ثبت شد.`,
             icon: "success",
@@ -248,7 +262,15 @@
                 popup: "animate__animated animate__fadeOutUp"
             }
         });
-    createTable("جدول پروفایل ها" , "profile" , "table-profile")
-      document.getElementById("profileForm").reset();
+        document.getElementById("profileForm").reset();
+     } else{
+         Swal.fire({
+                title: "خطا!",
+                text: "افزودن پروفایل با مشکل مواجه شد.",
+                icon: "error",
+                confirmButtonText: "متوجه شدم",
+                confirmButtonColor: "#d33"
+            });
+     }
     }
     </script>
