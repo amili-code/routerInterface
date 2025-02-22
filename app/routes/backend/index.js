@@ -12,6 +12,7 @@ const routerController = require("app/api/routers");
 const limitationController = require("app/api/limitation");
 const profileController = require("app/api/profile");
 const clientController = require("app/api/client");
+const blockedClientController = require("app/api/blockedClient");
 
 
 
@@ -48,5 +49,11 @@ router.get('/client/:id', clientController.getOne.bind(clientController))
 router.put('/client/:id', clientController.update.bind(clientController))
 router.delete('/client/:id', clientController.delete.bind(clientController))
 
+router.get('/block-client', blockedClientController.getAll.bind(blockedClientController))
+router.get('/block-clients', blockedClientController.getAllProp.bind(blockedClientController))
+router.post('/block-client', blockedClientController.create.bind(blockedClientController))
+router.get('/block-client/:id', blockedClientController.getOne.bind(blockedClientController))
+router.put('/block-client/:id', blockedClientController.update.bind(blockedClientController))
+router.delete('/block-client/:id', blockedClientController.delete.bind(blockedClientController))
 
 module.exports = router;

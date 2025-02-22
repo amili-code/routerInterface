@@ -50,25 +50,28 @@
                             <div
                                 class="col input-group input-group-outline my-3">
                                 <label
-                                    class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">نام کاربری</label>
+                                    class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">نام
+                                    کاربری</label>
                                 <input type="text" name="fullName"
                                     class="form-control">
                             </div>
                             <div
                                 class="col input-group input-group-outline my-3">
                                 <label
-                                    class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">شماره اتاق</label>
+                                    class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">شماره
+                                    اتاق</label>
                                 <input type="number" name="roomNumber"
                                     class="form-control">
                             </div>
                             <div
                                 class="col input-group input-group-outline my-3">
                                 <label
-                                    class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">تعداد کاربران</label>
+                                    class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">تعداد
+                                    کاربران</label>
                                 <input type="number" name="ClientCount"
                                     class="form-control">
                             </div>
-                           
+
                             <div
                                 class="col input-group input-group-outline my-3"
                                 id="ProfileInput">
@@ -160,57 +163,93 @@
                 </div>
             </div>
         </div>
-
-        <div id="modal-creator-client"></div>
-        <footer class="footer py-4  ">
-            <div class="container-fluid">
-                <div class="row align-items-center justify-content-lg-between">
-                    <div class="col-lg-6 mb-lg-0 mb-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div
+                        class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div
-                            class="copyright text-center text-sm text-muted text-lg-end">
-                            © <script>
-                  document.write(new Date().getFullYear())
-                </script>,
-                            ساخته شده <i class="fa fa-heart"></i> توسط
-                            <a href="https://www.github.com/amili-code"
-                                class="font-weight-bold"
-                                target="_blank">amili-code</a>
-                            برای مدیریت اسان تر
+                            class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
+                            <h6
+                                class="text-white text-capitalize ps-3 m-2">مسدودیت</h6>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <ul
-                            class="nav nav-footer justify-content-center justify-content-lg-end">
-                            <li class="nav-item">
-                                <a href="https://www.creative-tim.com"
-                                    class="nav-link text-muted"
-                                    target="_blank">درباره ما</a>
-                            </li>
-                            <li class="nav-item">
-                                <a
-                                    href="https://www.creative-tim.com/presentation"
-                                    class="nav-link text-muted"
-                                    target="_blank">درباره نرم افزار</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="https://www.creative-tim.com/blog"
-                                    class="nav-link text-muted"
-                                    target="_blank">یادگیری</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="https://amili-code.github.io"
-                                    class="nav-link pe-0 text-muted"
-                                    target="_blank">من</a>
-                            </li>
-                        </ul>
+                    <div class="card-body px-0 pb-2">
+                        <div class="row container-fluid">
+                            <div class="col input-group input-group-outline my-3">
+                                <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    جستجو بر اساس نام
+                                </label>
+                                <input type="text" id="searchInput" class="form-control">
+                            </div>
+                            <div class="col my-3 d-flex align-items-center">
+                                <label class="mx-2">
+                                    <input type="radio" name="filterOption" value="all" checked> همه
+                                </label>
+                                <label class="mx-2">
+                                    <input type="radio" name="filterOption" value="active"> کاربران فعال
+                                </label>
+                                <label class="mx-2">
+                                    <input type="radio" name="filterOption" value="blocked"> کاربران مسدود
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row container-fluid" id="clientBlocker"></div>
+
                     </div>
                 </div>
             </div>
-        </footer>
-    </div>
+            <div id="modal-creator-client"></div>
+            <footer class="footer py-4  ">
+                <div class="container-fluid">
+                    <div
+                        class="row align-items-center justify-content-lg-between">
+                        <div class="col-lg-6 mb-lg-0 mb-4">
+                            <div
+                                class="copyright text-center text-sm text-muted text-lg-end">
+                                © <script>
+                  document.write(new Date().getFullYear())
+                </script>,
+                                ساخته شده <i class="fa fa-heart"></i> توسط
+                                <a href="https://www.github.com/amili-code"
+                                    class="font-weight-bold"
+                                    target="_blank">amili-code</a>
+                                برای مدیریت اسان تر
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <ul
+                                class="nav nav-footer justify-content-center justify-content-lg-end">
+                                <li class="nav-item">
+                                    <a href="https://www.creative-tim.com"
+                                        class="nav-link text-muted"
+                                        target="_blank">درباره ما</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a
+                                        href="https://www.creative-tim.com/presentation"
+                                        class="nav-link text-muted"
+                                        target="_blank">درباره نرم افزار</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="https://www.creative-tim.com/blog"
+                                        class="nav-link text-muted"
+                                        target="_blank">یادگیری</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="https://amili-code.github.io"
+                                        class="nav-link pe-0 text-muted"
+                                        target="_blank">من</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
 
-    <script> 
-    async function createInputClientForm(){
+        <script> 
+     async function createInputClientForm(){
         let profile = await apiRequest("/profile");
 
         document.getElementById("ProfileInput").innerHTML=`
@@ -226,8 +265,8 @@
         `
     }
         
-    createInputClientForm()
-    createTable("جدول پروفایل ها" , "client" , "table-client")
+     createInputClientForm()
+        createTable("جدول پروفایل ها" , "client" , "table-client")
        document.getElementById("clientForm").addEventListener("submit", function(event) {
         event.preventDefault(); // جلوگیری از ارسال فرم به صورت پیش‌فرض
 
@@ -242,7 +281,7 @@
         }, 4000);
     });
 
-    async function createclient(data) {
+     async function createclient(data) {
      const response =await apiRequest("/client", "POST", data);
      if (response) {
         Swal.fire({
@@ -271,4 +310,178 @@
             });
      }
     }
-    </script>
+   
+   
+   
+    async function createBlockClient(filter = "all", searchQuery = "") {
+    const clients = await apiRequest("/client");
+    const blockClients = await apiRequest("/block-clients");
+
+    document.getElementById("clientBlocker").innerHTML = ""; // پاک کردن لیست قبلی
+
+    clients.forEach(client => {
+        console.log(client);
+        console.log(blockClients);
+        const isBlocked = blockClients.some(blocked => blocked.clientId === client.id);
+        // اعمال فیلتر
+        if (filter === "blocked" && !isBlocked) return;
+        if (filter === "active" && isBlocked) return;
+
+        // اعمال جستجو
+        if (searchQuery && !client.name.includes(searchQuery)) return;
+
+        const buttonStyles = isBlocked
+            ? 'background: #ccc; cursor: not-allowed; opacity: 0.6;'
+            : 'background: linear-gradient(to bottom, #4a90e2, #357abd); cursor: pointer;';
+        
+        const buttonDisabled = isBlocked ? 'disabled' : '';
+
+        document.getElementById("clientBlocker").innerHTML += `
+            <div class="col-lg-3 col-sm-6 mb-lg-0 mb-4" style="margin-top:.5rem">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between p-3 pt-2">
+                        <button onclick="clientBlocker('${client.id}', '${client.name}')" 
+                            class="btn icon icon-md icon-shape shadow-dark text-center border-radius-lg"
+                            style="${buttonStyles}"
+                            ${buttonDisabled}>
+                            <i class="material-symbols-rounded opacity-10">weekend</i>
+                        </button>
+                        <div class="text-start pt-1">
+                            <p class="text-sm mb-0 text-capitalize">مسدود بکنید</p>
+                            <h6 class="mb-0">کاربر: ${client.name}</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+
+    document.getElementById("clientBlocker").innerHTML += `<a class="btn btn-outline-dark mt-4 w-100 m-2" type="button" href="#block-client">نمایش تمام مسدودیت ها</a>`; // پاک کردن لیست قبلی
+}
+
+// مقداردهی اولیه
+createBlockClient();
+
+// مدیریت جستجو و فیلتر
+document.getElementById("searchInput").addEventListener("input", function() {
+    const searchValue = this.value.trim();
+    const filterValue = document.querySelector('input[name="filterOption"]:checked').value;
+    createBlockClient(filterValue, searchValue);
+});
+
+document.querySelectorAll('input[name="filterOption"]').forEach(input => {
+    input.addEventListener("change", function() {
+        const searchValue = document.getElementById("searchInput").value.trim();
+        createBlockClient(this.value, searchValue);
+    });
+});
+
+    
+    async function clientBlocker(id , name){
+    // بررسی اینکه آیا مودال از قبل وجود دارد یا نه
+    if (document.getElementById("clientBlockModal")) {
+        document.getElementById("clientBlockModal").remove();
+    }
+
+    // ایجاد HTML مودال
+    const modalHTML = `
+        <div id="clientBlockModal" style="
+            display: flex;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;">
+            
+            <div style="
+                background: white;
+                padding: 20px;
+                border-radius: 10px;
+                width: 350px;
+                text-align: center;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
+                
+                <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">مسدود کردن کاربر</div>
+                <p><strong>نام کاربر:</strong> <span id="clientName" data-id="${id}">${"کاربر " + name}</span></p>
+                
+                <textarea id="blockReason" style="
+                    width: 100%;
+                    padding: 8px;
+                    margin-top: 10px;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;"
+                    placeholder="دلیل مسدودیت را وارد کنید"></textarea>
+                
+                <div style="display: flex; justify-content: space-between; margin-top: 15px;">
+                    <button id="submitBlock" class="btn bg-gradient-dark mt-4 w-100 m-1">
+                        ثبت
+                    </button>
+                    <button id="closeModal" class="btn btn-outline-dark mt-4 w-100 m-1">
+                        لغو
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // اضافه کردن مودال به صفحه
+    document.body.insertAdjacentHTML("beforeend", modalHTML);
+
+    // عملکرد بستن مودال
+    document.getElementById("closeModal").addEventListener("click", function () {
+        document.getElementById("clientBlockModal").remove();
+    });
+
+    // عملکرد ثبت اطلاعات
+    document.getElementById("submitBlock").addEventListener("click",async function () {
+        const reason = document.getElementById("blockReason").value;
+        const clientName = document.getElementById("clientName").getAttribute("data-id");
+
+        if (!reason.trim()) {
+            alert("لطفاً دلیل مسدودیت را وارد کنید.");
+            return;
+        }
+
+        const response = await apiRequest("/block-client" , "POST" , { clientId: clientName, reason: reason })
+        // ارسال اطلاعات به سرور
+        if (response) {
+            Swal.fire({
+                title: "کاربر مسدود شد!",
+                text: `کاربر با موفقیت مسدود شد.`,
+                icon: "success",
+                confirmButtonText: "متوجه شدم",
+                confirmButtonColor:'#43A047',
+                timer: 3000,
+                timerProgressBar: true,
+                showClass: {
+                    popup: "animate__animated animate__fadeInDown"
+                },
+                hideClass: {
+                    popup: "animate__animated animate__fadeOutUp"
+                }
+            });
+            document.getElementById("clientBlockModal").remove();
+            createTable("جدول پروفایل ها" , "block-client" , "table-block-client")    
+            createBlockClient() 
+
+        } else{
+            Swal.fire({
+                    title: "خطا!",
+                    text: "افزودن کاربر به کاربران مسدود با مشکل مواجه شد.",
+                    icon: "error",
+                    confirmButtonText: "متوجه شدم",
+                    confirmButtonColor: "#d33"
+                });
+        document.getElementById("clientBlockModal").remove();
+
+        }
+    });
+}
+
+    
+   </script>

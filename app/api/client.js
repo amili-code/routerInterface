@@ -81,13 +81,31 @@ class ClientController {
             const user = await User.findByPk(req.params.id);
             if (!user) return res.status(404).json({ error: "کاربر پیدا نشد" });
 
-            const { username, password, fullName, roomNumber, profileId, userCount } = req.body;
+            const { name, username, password, fullName, roomNumber, profileId, ClientCount } = req.body;
 
-            // بررسی وجود پروفایل در صورت تغییر
-            if (profileId) {
-                const profile = await Profile.findByPk(profileId);
-                if (!profile) return res.status(404).json({ error: "پروفایل مرتبط پیدا نشد" });
+            const profile = await Profile.findByPk(profileId);
+            if (!profile) return res.status(404).json({ error: "پروفایل مرتبط پیدا نشد" });
+            const limitation = await Limitation.findByPk(profile.limitationId);
+            if (!limitation) return res.status(404).json({ error: "پروفایل مرتبط پیدا نشد" });
+            const router = await Router.findByPk(limitation.routerId)
+            if (!router) return res.status(404).json({ error: "پروفایل مرتبط پیدا نشد" });
+
+            if (profileId != user.profileId) {
+                const relatedCommand = `user-manager/user-profile/remove [find User=${user.name}]`
+                const relatedCommandResult = await executeCommand(router, relatedCommand)
+                const addRelatedCommand = `user-manager/user-profile/add user=${name} profile=${profile.name}`
+                const addRelatedCommandResult = await executeCommand(router, addRelatedCommand)
             }
+
+
+            // const command = `user-manager/user/remove [find name=${user.name}]`
+            // const commandResult = await executeCommand(router, command)
+            
+            const addCommand = `user-manager/user/set [find name="${user.name}"] name=${name} password=${password} shared-users=${ClientCount}`
+            const addCommandResult = await executeCommand(router, addCommand)
+
+
+
 
             await user.update(req.body);
 
@@ -113,8 +131,8 @@ class ClientController {
             const router = await Router.findByPk(limitation.routerId)
             if (!router) return res.status(404).json({ error: "پروفایل مرتبط پیدا نشد" });
 
+            const relatedCommand = `user-manager/user-profile/remove [find user=${user.name}]`
             const command = `user-manager/user/remove [find name=${user.name}]`
-            const relatedCommand = `user-manager/user-profile/remove [find User=${user.name}]`
             console.log(command, relatedCommand);
 
             const realtedResponse = await executeCommand(router, relatedCommand)

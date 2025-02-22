@@ -3,6 +3,7 @@ const Router = require("../model/Routers")
 const Limitation = require("../model/Limitation")
 const Profile = require("../model/Profile")
 const Client = require("../model/Client")
+const BlockedClient = require("../model/BlockedClient")
 
 async function syncDatabase() {
     await connectDB();

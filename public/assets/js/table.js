@@ -9,16 +9,20 @@ async function createTable(title, api, id) {
         console.log(api);
         const getData = await apiRequest(`/${api}`);
         const table = document.getElementById(`${id}`)
-        const fieldsArray = Object.keys(getData[0]).filter(key => key !== "updatedAt" && key !== "id");
-        const persianArrey = translateFields(fieldsArray)
-        createTrThead(persianArrey, id)
-        createTrTbody(getData, id, api)
-        data = await getData
-        createdDataTitle = await title
-        createdDataapi = await api
-        createdDataId = await id
+        if (getData.length > 0) {
+            const fieldsArray = Object.keys(getData[0]).filter(key => key !== "updatedAt" && key !== "id");
+            const persianArrey = translateFields(fieldsArray)
+            createTrThead(persianArrey, id)
+            createTrTbody(getData, id, api)
+            data = await getData
+            createdDataTitle = await title
+            createdDataapi = await api
+            createdDataId = await id
+        } else {
+            return false
+        }
     } catch (error) {
-        console.log(title , api, table);
+        // console.log(title , api, table);
         console.log(error);
     }
 }
@@ -109,6 +113,18 @@ function translateFields(fieldsArray) {
             case "profilePrice":
                 persianWord = "قیمت پرفایل"
                 break;
+            case "clientName":
+                persianWord = "نام"
+                break;
+            case "clientRoomNumber":
+                persianWord = "شماره اتاق کاربر"
+                break;
+            case "fullName":
+                persianWord = "نام کاربری"
+                break;
+            case "reason":
+                persianWord = "علت مسدودیت"
+                break;
 
             default:
                 break;
@@ -129,10 +145,16 @@ function createTrThead(fieldsArray, id) {
             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">${field}</th>
         `
     });
-    tr.innerHTML += `
-        <th class="text-secondary text-xxs font-weight-bolder opacity-7">ویرایش</th>
-        <th class="text-secondary text-xxs font-weight-bolder opacity-7">حذف</th>
-    `
+    if (id == "table-block-client") { 
+        tr.innerHTML += `
+            <th class="text-secondary text-xxs font-weight-bolder opacity-7">بازگردانی</th>
+        `
+    } else {
+        tr.innerHTML += `
+            <th class="text-secondary text-xxs font-weight-bolder opacity-7">ویرایش</th>
+            <th class="text-secondary text-xxs font-weight-bolder opacity-7">حذف</th>
+        `
+    }
 }
 
 function createTrTbody(data, id, api) {
@@ -151,14 +173,22 @@ function createTrTbody(data, id, api) {
                 </td>
             `
         }
-        tbody += `
+        if (id == "table-block-client") {
+            tbody += `
+            <td class="align-middle text-center text-sm">
+                <button type="button" onClick="returnModal(${item["id"]} , '${item["clientName"]}' , '${api}')" class="badge badge-sm bg-gradient-secondary " style="border:none">بازگردانی</button>
+            </td></tr>
+            `
+        } else {
+            tbody += `
             <td class="align-middle text-center text-sm">
                 <button type="button" onClick="editModal(${item["id"]} , '${item["name"]}' , '${api}')" class="badge badge-sm bg-gradient-warning " style="border:none">ویرایش</button>
             </td>
             <td class="align-middle text-center text-sm">
                 <button type="button" onClick="deleteModal(${item["id"]} , '${item["name"]}' , '${api}')" class="badge badge-sm bg-gradient-danger" style="border:none">حذف</button>
             </td></tr>
-        `
+        `  
+        } 
     })
     tr.innerHTML = tbody
 }
@@ -244,6 +274,18 @@ function translator(data) {
             break;
         case "profilePrice":
             returnedData = "قیمت پرفایل"
+            break;
+        case "clientName":
+            returnedData = "نام"
+            break;
+        case "clientRoomNumber":
+            returnedData = "شماره اتاق کاربر"
+            break;
+        case "fullName":
+            returnedData = "نام کاربری"
+            break;
+        case "reason":
+            returnedData = "علت مسدودیت"
             break;
 
         default:
@@ -401,7 +443,7 @@ async function editModal(id, name, api) {
                         <option value="on_login" ${item[key] === "از موقع ورود" ? "selected" : ""}>از موقع ورود</option>
                     </select>
                 `;
-            } else if (key === "profileName" && relatedData.profile){
+            } else if (key === "profileName" && relatedData.profile) {
                 formFields += `
                     <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">${translator(key)}</label>
                     <select name="profileId" id="edit-limitationId" style="width: 100%; padding: 8px; margin-bottom: 10px;">
