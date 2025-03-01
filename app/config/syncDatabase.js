@@ -4,6 +4,7 @@ const Limitation = require("../model/Limitation")
 const Profile = require("../model/Profile")
 const Client = require("../model/Client")
 const BlockedClient = require("../model/BlockedClient")
+const Session = require("../model/Session")
 
 async function syncDatabase() {
     await connectDB();

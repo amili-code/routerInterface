@@ -176,25 +176,33 @@
                     </div>
                     <div class="card-body px-0 pb-2">
                         <div class="row container-fluid">
-                            <div class="col input-group input-group-outline my-3">
-                                <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            <div
+                                class="col input-group input-group-outline my-3">
+                                <label
+                                    class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                     جستجو بر اساس نام
                                 </label>
-                                <input type="text" id="searchInput" class="form-control">
+                                <input type="text" id="searchInput"
+                                    class="form-control">
                             </div>
-                            <div class="col my-3 d-flex align-items-center">
+                            <div
+                                class="col my-3 d-flex align-items-center input-group input-group-outline">
                                 <label class="mx-2">
-                                    <input type="radio" name="filterOption" value="all" checked> همه
+                                    <input type="radio" name="filterOption"
+                                        value="all" checked> همه
                                 </label>
                                 <label class="mx-2">
-                                    <input type="radio" name="filterOption" value="active"> کاربران فعال
+                                    <input type="radio" name="filterOption"
+                                        value="active"> کاربران فعال
                                 </label>
                                 <label class="mx-2">
-                                    <input type="radio" name="filterOption" value="blocked"> کاربران مسدود
+                                    <input type="radio" name="filterOption"
+                                        value="blocked"> کاربران مسدود
                                 </label>
                             </div>
                         </div>
-                        <div class="row container-fluid" id="clientBlocker"></div>
+                        <div class="row container-fluid"
+                            id="clientBlocker"></div>
 
                     </div>
                 </div>
@@ -398,7 +406,7 @@ document.querySelectorAll('input[name="filterOption"]').forEach(input => {
             justify-content: center;
             align-items: center;">
             
-            <div style="
+            <div card="card" style="
                 background: white;
                 padding: 20px;
                 border-radius: 10px;

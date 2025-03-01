@@ -59,7 +59,7 @@
           </div>
         </div>
         <hr class="horizontal dark my-sm-4">
-        <a class="btn white-gradient-info w-100" style="font-family: peyda;">تنظیمات پیش فرض</a>
+        <a class="btn white-gradient-info w-100" onclick="location.reload()" style="font-family: peyda;">تنظیمات پیش فرض</a>
         <a class="btn bg-gradient-info w-100" style="font-family: peyda;">یادگیری</a>
         <a class="btn btn-outline-dark w-100" style="font-family: peyda;">ارتباط با ما</a>
         <!-- <div class="w-100 text-center">
@@ -82,78 +82,78 @@
   <script src="/assets/js/plugins/smooth-scrollbar.min.js"></script>
   <script src="/assets/js/plugins/chartjs.min.js"></script>
   <script>
-    var ctx = document.getElementById("chart-bars").getContext("2d");
+    // var ctx = document.getElementById("chart-bars").getContext("2d");
 
-    new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: ["M", "T", "W", "T", "F", "S", "S"],
-        datasets: [{
-          label: "Views",
-          tension: 0.4,
-          borderWidth: 0,
-          borderRadius: 4,
-          borderSkipped: false,
-          backgroundColor: "#43A047",
-          data: [50, 45, 22, 28, 50, 60, 76],
-          barThickness: 'flex'
-        }, ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false,
-          }
-        },
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
-        scales: {
-          y: {
-            grid: {
-              drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [5, 5],
-              color: '#e5e5e5'
-            },
-            ticks: {
-              suggestedMin: 0,
-              suggestedMax: 500,
-              beginAtZero: true,
-              padding: 10,
-              font: {
-                size: 14,
-                lineHeight: 2
-              },
-              color: "#737373"
-            },
-          },
-          x: {
-            grid: {
-              drawBorder: false,
-              display: false,
-              drawOnChartArea: false,
-              drawTicks: false,
-              borderDash: [5, 5]
-            },
-            ticks: {
-              display: true,
-              color: '#737373',
-              padding: 10,
-              font: {
-                size: 14,
-                lineHeight: 2
-              },
-            }
-          },
-        },
-      },
-    });
+    // new Chart(ctx, {
+    //   type: "bar",
+    //   data: {
+    //     labels: ["M", "T", "W", "T", "F", "S", "S"],
+    //     datasets: [{
+    //       label: "Views",
+    //       tension: 0.4,
+    //       borderWidth: 0,
+    //       borderRadius: 4,
+    //       borderSkipped: false,
+    //       backgroundColor: "#43A047",
+    //       data: [50, 45, 22, 28, 50, 60, 76],
+    //       barThickness: 'flex'
+    //     }, ],
+    //   },
+    //   options: {
+    //     responsive: true,
+    //     maintainAspectRatio: false,
+    //     plugins: {
+    //       legend: {
+    //         display: false,
+    //       }
+    //     },
+    //     interaction: {
+    //       intersect: false,
+    //       mode: 'index',
+    //     },
+    //     scales: {
+    //       y: {
+    //         grid: {
+    //           drawBorder: false,
+    //           display: true,
+    //           drawOnChartArea: true,
+    //           drawTicks: false,
+    //           borderDash: [5, 5],
+    //           color: '#e5e5e5'
+    //         },
+    //         ticks: {
+    //           suggestedMin: 0,
+    //           suggestedMax: 500,
+    //           beginAtZero: true,
+    //           padding: 10,
+    //           font: {
+    //             size: 14,
+    //             lineHeight: 2
+    //           },
+    //           color: "#737373"
+    //         },
+    //       },
+    //       x: {
+    //         grid: {
+    //           drawBorder: false,
+    //           display: false,
+    //           drawOnChartArea: false,
+    //           drawTicks: false,
+    //           borderDash: [5, 5]
+    //         },
+    //         ticks: {
+    //           display: true,
+    //           color: '#737373',
+    //           padding: 10,
+    //           font: {
+    //             size: 14,
+    //             lineHeight: 2
+    //           },
+    //         }
+    //       },
+    //     },
+    //   },
+    // });
 
 
     var ctx2 = document.getElementById("chart-line").getContext("2d");

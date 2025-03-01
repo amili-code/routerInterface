@@ -1,5 +1,9 @@
 const BlockedClient = require("../model/BlockedClient");
 const Client = require("../model/Client");
+const Profile = require("../model/Profile");
+const Limitation = require("../model/Limitation");
+const Router = require("../model/Routers");
+const { executeCommand } = require("../command/routerCommand");
 
 class BlockedClientController {
     // دریافت لیست تمام کاربران مسدود شده
@@ -28,7 +32,7 @@ class BlockedClientController {
         }
     }
 
-    async getAllProp(req ,res) {
+    async getAllProp(req, res) {
         try {
             const blockedClients = await BlockedClient.findAll({
                 include: [{
@@ -73,13 +77,19 @@ class BlockedClientController {
         try {
             const { clientId, reason } = req.body;
             // بررسی وجود کاربر
-            console.log(req.body);
             const client = await Client.findByPk(clientId);
             if (!client) return res.status(404).json({ error: "کاربر پیدا نشد" });
-            console.log(client);
-            
+            const profile = await Profile.findByPk(client.profileId);
+            if (!profile) return res.status(404).json({ error: "پروفایل مرتبط پیدا نشد" });
+            const limitation = await Limitation.findByPk(profile.limitationId);
+            if (!limitation) return res.status(404).json({ error: "پروفایل مرتبط پیدا نشد" });
+            const router = await Router.findByPk(limitation.routerId)
+            if (!router) return res.status(404).json({ error: "پروفایل مرتبط پیدا نشد" });
+
+
             const blockClient = await BlockedClient.create(req.body)
-            console.log(blockClient);
+            const command = `user-manager/user/set [find name="${client.name}"] disable=yes`
+            const response = await executeCommand(router , command)
 
             res.status(201).json(blockClient);
         } catch (error) {
@@ -107,7 +117,20 @@ class BlockedClientController {
             const blockedClient = await BlockedClient.findByPk(req.params.id);
             if (!blockedClient)
                 return res.status(404).json({ error: "کاربر مسدود شده پیدا نشد" });
-
+            
+            const client = await Client.findByPk(blockedClient.clientId);
+            if (!client) return res.status(404).json({ error: "کاربر پیدا نشد" });
+            const profile = await Profile.findByPk(client.profileId);
+            if (!profile) return res.status(404).json({ error: "پروفایل مرتبط پیدا نشد" });
+            const limitation = await Limitation.findByPk(profile.limitationId);
+            if (!limitation) return res.status(404).json({ error: "پروفایل مرتبط پیدا نشد" });
+            const router = await Router.findByPk(limitation.routerId)
+            if (!router) return res.status(404).json({ error: "پروفایل مرتبط پیدا نشد" });
+            
+            const command = `user-manager/user/set [find name="${client.name}"] disable=no`
+            const response = await executeCommand(router, command)
+            
+            
             await blockedClient.destroy();
             res.status(200).json({ message: "کاربر از لیست مسدود شده حذف شد" });
         } catch (error) {

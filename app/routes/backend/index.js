@@ -24,6 +24,7 @@ const blockedClientController = require("app/api/blockedClient");
 
 // router.use(activityLogger);
 router.get('/routers', routerController.getAll.bind(routerController))
+router.get('/router-information/:id&:ether', routerController.information.bind(routerController))
 router.post('/routers', routerController.create.bind(routerController))
 router.get('/routers/:id', routerController.getOne.bind(routerController))
 router.get('/routers-connection/:id', routerController.connection.bind(routerController))
@@ -44,6 +45,9 @@ router.put('/profile/:id', profileController.update.bind(profileController))
 router.delete('/profile/:id', profileController.delete.bind(profileController))
 
 router.get('/client', clientController.getAll.bind(clientController))
+router.get('/active-client', clientController.activeUser.bind(clientController))
+router.get('/active', clientController.allSession.bind(clientController))
+router.get('/device', clientController.macSession.bind(clientController))
 router.post('/client', clientController.create.bind(clientController))
 router.get('/client/:id', clientController.getOne.bind(clientController))
 router.put('/client/:id', clientController.update.bind(clientController))

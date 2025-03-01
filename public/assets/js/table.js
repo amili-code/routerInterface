@@ -70,7 +70,7 @@ function translateFields(fieldsArray) {
                 break;
 
             case "rx":
-                persianWord = "TX"
+                persianWord = "RX"
                 break;
 
             case "timeLimit":
@@ -125,7 +125,40 @@ function translateFields(fieldsArray) {
             case "reason":
                 persianWord = "علت مسدودیت"
                 break;
+            case "userFullName":
+                persianWord = "نام کاربری"
+                break;
+            case "roomNumber":
+                persianWord = "شماره اتاق"
+                break;
+            case "acctSessionId":
+                persianWord = "شناسه ارتباطی"
+                break;
+            case "callingStationId":
+                persianWord = "مک ادرس دیوایس"
+                break;
+            case "userAddress":
+                persianWord = "ای پی دیوایس"
+                break;
+            case "started":
+                persianWord = " زمان شروع ارتباط"
+                break;
+            case "lastAccountingPacket":
+                persianWord = "زمان پایان ارتباط"
+                break;
+            case "uptime":
+                persianWord = "کل زمان ارتباط"
+                break;
+            case "userName":
+                persianWord = "نام کاربر"
+                break;
 
+            case "clientFullName":
+                persianWord = "نام کاربری"
+                break;
+            case "clientRoomNumber":
+                persianWord = "شماره اتاق"
+                break;
             default:
                 break;
         }
@@ -145,9 +178,15 @@ function createTrThead(fieldsArray, id) {
             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">${field}</th>
         `
     });
-    if (id == "table-block-client") { 
+    if (id == "table-block-client") {
         tr.innerHTML += `
             <th class="text-secondary text-xxs font-weight-bolder opacity-7">بازگردانی</th>
+        `
+    } else if (id == "table-active") {
+        tr.innerHTML += ``
+    } else if (id == "table-session") {
+        tr.innerHTML += `
+            <th class="text-secondary text-xxs font-weight-bolder opacity-7">افزودن به بلک لیست</th>
         `
     } else {
         tr.innerHTML += `
@@ -164,8 +203,11 @@ function createTrTbody(data, id, api) {
     data.forEach(item => {
 
         for (const key in item) {
+            if (id == "table-session") console.log(key);
             if (key == "id" || key == "updatedAt") continue
             if (key == "createdAt") item[key] = convertToJalaliDate(item[key])
+            if (key == "started") item[key] = convertToJalaliDate(item[key])
+            if (key == "lastAccountingPacket") item[key] = convertToJalaliDate(item[key])
 
             tbody += `
                 <td class="align-middle text-center text-sm">
@@ -179,6 +221,12 @@ function createTrTbody(data, id, api) {
                 <button type="button" onClick="returnModal(${item["id"]} , '${item["clientName"]}' , '${api}')" class="badge badge-sm bg-gradient-secondary " style="border:none">بازگردانی</button>
             </td></tr>
             `
+        } else if (id == "table-active") {
+            tbody += ``
+        } else if (id == "table-session") {
+            tbody += `<td class="align-middle text-center text-sm">
+                <button type="button" onClick="addBlockList('${item["userAddress"]}' , '${item["acctSessionId"]}' , '${item["callingStationId"]}')" class="badge badge-sm bg-gradient-info " style="border:none">افزودن به بلک لیست</button>
+            </td></tr>`
         } else {
             tbody += `
             <td class="align-middle text-center text-sm">
@@ -187,8 +235,8 @@ function createTrTbody(data, id, api) {
             <td class="align-middle text-center text-sm">
                 <button type="button" onClick="deleteModal(${item["id"]} , '${item["name"]}' , '${api}')" class="badge badge-sm bg-gradient-danger" style="border:none">حذف</button>
             </td></tr>
-        `  
-        } 
+        `
+        }
     })
     tr.innerHTML = tbody
 }
@@ -232,7 +280,7 @@ function translator(data) {
             break;
 
         case "rx":
-            returnedData = "TX"
+            returnedData = "RX"
             break;
 
         case "timeLimit":
@@ -287,6 +335,41 @@ function translator(data) {
         case "reason":
             returnedData = "علت مسدودیت"
             break;
+
+        case "userFullName":
+            returnedData = "نام کاربری"
+            break;
+        case "roomNumber":
+            returnedData = "شماره اتاق"
+            break;
+        case "acctSessionId":
+            returnedData = "شناسه ارتباطی"
+            break;
+        case "callingStationId":
+            returnedData = "مک ادرس دیوایس"
+            break;
+        case "userAddress":
+            returnedData = "ای پی دیوایس"
+            break;
+        case "started":
+            returnedData = " زمان شروع ارتباط"
+            break;
+        case "lastAccountingPacket":
+            returnedData = "زمان پایان ارتباط"
+            break;
+        case "uptime":
+            returnedData = "کل زمان ارتباط"
+            break;
+        case "userName":
+            returnedData = "نام کاربر"
+            break;
+        case "clientFullName":
+            returnedData = "نام کاربری"
+            break;
+        case "clientRoomNumber":
+            returnedData = "شماره اتاق"
+            break;
+
 
         default:
             break;
@@ -534,3 +617,6 @@ function closeModal() {
 }
 
 
+function addBlockList() {
+
+}

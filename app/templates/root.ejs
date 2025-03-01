@@ -10,6 +10,8 @@
       document.getElementById("profile").style.display = "none"
       document.getElementById("client").style.display = "none"
       document.getElementById("block-client").style.display = "none"
+      document.getElementById("active").style.display = "none"
+      document.getElementById("session").style.display = "none"
     }
 
 
@@ -57,8 +59,21 @@
             displayNone()
             document.getElementById("block-client").style.display = "block"
             break;
-
-        default:
+            
+          case "active":
+            navUpdate("کاربران فعال")
+            sliderUpdate("active")
+            displayNone()
+            document.getElementById("active").style.display = "block"
+            break;
+            case "session":
+              navUpdate("بلک لیست")
+              sliderUpdate("session")
+              displayNone()
+              document.getElementById("session").style.display = "block"
+              break;
+            
+              default:
           navUpdate("داشبورد")
           sliderUpdate("dashboard")
           displayNone()
@@ -83,6 +98,13 @@
 
 <div id="block-client" style="display: none;">
   <%- include('./blockclient'); %>
+</div>
+
+<div id="active" style="display: none;">
+  <%- include('./active'); %>
+</div>
+<div id="session" style="display: none;">
+  <%- include('./session'); %>
 </div>
 
 <div id="client" style="display: none;">

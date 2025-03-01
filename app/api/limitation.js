@@ -67,20 +67,19 @@ class LimitationController {
         try {
             const limitation = await Limitation.findByPk(req.params.id);
             if (!limitation) return res.status(404).json({ error: "محدودیت پیدا نشد" });
-            
-            
+
+
             // دریافت اطلاعات روتر مرتبط
             const router = await Router.findByPk(req.body.routerId);
-            
+
             // اجرای دستور برای ویرایش محدودیت روی روتر
             const { download, upload, name, tx, rx, timeLimit } = req.body;
             const command = `/user-manager limitation set [find where name="${name}"] download-limit=${download}G upload-limit=${upload}G rate-limit-tx=${tx}M rate-limit-rx=${rx}M uptime-limit=${timeLimit}`;
-            
+
             // اجرای دستور روی روتر
             const response = await executeCommand(router, command);
-            if (!response) throw new Error("خطا در اجرای دستور روی روتر");
-            
-            await limitation.update(req.body);
+
+            const result = await limitation.update(req.body);
             // به‌روزرسانی محدودیت در دیتابیس
             res.status(200).json(limitation); // ارسال نتیجه به‌روزرسانی به کلاینت
         } catch (error) {
