@@ -5,6 +5,102 @@ const Router = require("../model/Routers");
 const Session = require("../model/Session");
 const { executeCommand } = require("../command/routerCommand");
 
+
+function parseSessionData(sessionResponse) {
+    const extractValue = (text, pattern) => {
+        const match = text.match(pattern);
+        return match ? match[1] : null;
+    };
+
+    // 🔥 بهبود روش جدا کردن سشن‌ها
+    const sessionBlocks = sessionResponse.split(/\n\s*\d+\s+A?\s+user=/g).filter(block => block.trim());
+
+    const sessions = [];
+
+    for (const block of sessionBlocks) {
+        const acctSessionId = extractValue(block, /acct-session-id="(\d+)"/);
+        const nasPortType = extractValue(block, /nas-port-type=(\S+)/);
+        const nasPortId = extractValue(block, /nas-port-id="(\S+)"/);
+        const nasIpAddress = extractValue(block, /nas-ip-address=(\S+)/);
+        const callingStationId = extractValue(block, /calling-station-id="([\w:]+)"/);
+        const userAddress = extractValue(block, /user-address=(\S+)/);
+        const status = extractValue(block, /status=([\w,]+)/);
+        const started = extractValue(block, /started=([\d-]+\s+[\d:]+)/);
+        const ended = extractValue(block, /ended=([\d-]+\s+[\d:]+)/);
+        const terminateCause = extractValue(block, /terminate-cause=(\S+)/);
+        const uptime = extractValue(block, /uptime=([\w\d]+)/);
+        const download = extractValue(block, /download=([\w\d.]+)/);
+        const upload = extractValue(block, /upload=([\w\d.]+)/);
+        const lastAccountingPacket = extractValue(block, /last-accounting-packet=([\d-]+\s+[\d:]+)/);
+
+        sessions.push({
+            acctSessionId,
+            nasPortType,
+            nasPortId,
+            nasIpAddress,
+            callingStationId,
+            userAddress,
+            status,
+            started: started ? new Date(started) : null,
+            ended: ended ? new Date(ended) : null,
+            terminateCause: terminateCause || null,
+            uptime,
+            download,
+            upload,
+            lastAccountingPacket: lastAccountingPacket ? new Date(lastAccountingPacket) : null,
+        });
+    }
+
+    return sessions;
+}
+
+function parseActiveSessions(activeResponse) {
+    const extractValue = (text, pattern) => {
+        const match = text.match(pattern);
+        return match ? match[1] : null;
+    };
+
+    // 🔥 جداسازی بلاک‌های مربوط به هر سشن
+    const sessionBlocks = activeResponse.split(/\n\s*\d+\s+A\s+user=/g).filter(block => block.trim());
+
+    const activeSessions = [];
+
+    for (const block of sessionBlocks) {
+        const userName = extractValue(block, /user=(\w+)/);
+        const acctSessionId = extractValue(block, /acct-session-id="(\d+)"/);
+        const nasPortType = extractValue(block, /nas-port-type=(\S+)/);
+        const nasPortId = extractValue(block, /nas-port-id="(\S+)"/);
+        const nasIpAddress = extractValue(block, /nas-ip-address=([\d.]+)/);
+        const callingStationId = extractValue(block, /calling-station-id="([\w:]+)"/);
+        const userAddress = extractValue(block, /user-address=([\d.]+)/);
+        const status = extractValue(block, /status=([\w,]+)/);
+        const started = extractValue(block, /started=([\d-]+\s+[\d:]+)/);
+        const uptime = extractValue(block, /uptime=([\w\d]+)/);
+        const download = extractValue(block, /download=([\w\d.]+)/);
+        const upload = extractValue(block, /upload=([\w\d.]+)/);
+        const lastAccountingPacket = extractValue(block, /last-accounting-packet=([\d-]+\s+[\d:]+)/);
+
+        activeSessions.push({
+            userName,
+            acctSessionId,
+            nasPortType,
+            nasPortId,
+            nasIpAddress,
+            callingStationId,
+            userAddress,
+            status,
+            started: started ? new Date(started) : null,
+            uptime,
+            download,
+            upload,
+            lastAccountingPacket: lastAccountingPacket ? new Date(lastAccountingPacket) : null,
+        });
+    }
+
+    return activeSessions;
+}
+
+
 class ClientController {
     // دریافت لیست همه کاربران
     async getAll(req, res) {
@@ -62,7 +158,6 @@ class ClientController {
 
             const command = `user-manager/user/add name=${name} password=${password} shared-users=${ClientCount}`
             const relatedCommand = `user-manager/user-profile/add user=${name} profile=${profile.name}`
-            console.log(command, relatedCommand);
 
             const response = await executeCommand(router, command)
             const realtedResponse = await executeCommand(router, relatedCommand)
@@ -105,8 +200,7 @@ class ClientController {
             // تغییر کلیدهای خروجی برای حذف "Client."
             const formattedSessions = sessions.map(session => ({
                 ...session,
-                clientFullName: session['Client.clientFullName'],
-                clientRoomNumber: session['Client.clientRoomNumber']
+                clientFullName: session['Client.clientFullName']
             }));
 
             // حذف فیلدهای اضافی
@@ -125,7 +219,6 @@ class ClientController {
     async macSession(req, res) {
         try {
             const { mac, ip, sessionId } = req.query; // دریافت پارامترهای کوئری از درخواست
-            console.log(req.query);
             // ایجاد یک شیء where داینامیک برای فیلترها
             const whereClause = {};
             if (mac) whereClause.callingStationId = mac;
@@ -177,7 +270,22 @@ class ClientController {
         }
     }
 
-
+    async terminated(req, res) {
+        const sessionId = req.params.id
+        const session = await Session.findOne({ where: { acctSessionId: sessionId } })
+        const user = await User.findByPk(session.userId);
+        if (!user) res.status(404).json('user not founded')
+        const profile = await Profile.findByPk(user.profileId);
+        if (!profile) res.status(404).json('Profile not founded')
+        const limitation = await Limitation.findByPk(profile.limitationId);
+        if (!limitation) res.status(404).json('Limitation not founded')
+        const router = await Router.findByPk(limitation.routerId);
+        if (!router) res.status(404).json('Router not founded')
+        const responsee = await executeCommand(router, `user-manager/session/close-session [find where acct-session-id=${sessionId}]`)
+        // const response = await executeCommand(router, `user-manager/session/remove [find where acct-session-id=${sessionId}]`)
+        res.status(200).json(responsee)
+    }
+    
 
     async activeUser(req, res) {
         try {
@@ -199,90 +307,73 @@ class ClientController {
                 const sessionCommand = `user-manager/session/print where user=${user.name}`;
                 const sessionResponse = await executeCommand(router, sessionCommand);
 
-                if (sessionResponse) {
-                    const sessionRegex = /user=(\d+).*?acct-session-id="([^"]+)".*?nas-port-type=([^ ]+).*?nas-port-id="([^"]+)".*?nas-ip-address=([\d.]+).*?calling-station-id="([^"]+)".*?user-address=([\d.]+).*?status=([^ ]+).*?started=([\d-]+\s[\d:]+).*?(?:ended=([\d-]+\s[\d:]+))?.*?(?:terminate-cause=([\w-]+))?.*?uptime=([\w\d]+).*?download=([\w\d.]+).*?upload=([\w\d.]+).*?last-accounting-packet=([\d-]+\s[\d:]+)/gs;
+                const parsedSessions = parseSessionData(sessionResponse);
 
-                    let match;
-                    while ((match = sessionRegex.exec(sessionResponse)) !== null) {
-                        const [, userId, acctSessionId, nasPortType, nasPortId, nasIpAddress, callingStationId, userAddress, status, started, ended, terminateCause, uptime, download, upload, lastAccountingPacket] = match;
+                for (const session of parsedSessions) {
+                    if (!session.acctSessionId) continue
 
-                        // بررسی وجود سشن در دیتابیس
-                        const existingSession = await Session.findOne({ where: { acctSessionId } });
+                    const { acctSessionId, started, ended, lastAccountingPacket, ...otherData } = session;
 
-                        if (!existingSession) {
-                            // اگر وجود ندارد، آن را اضافه کن
-                            await Session.create({
-                                userId: user.id,
-                                acctSessionId,
-                                nasPortType,
-                                nasPortId,
-                                nasIpAddress,
-                                callingStationId,
-                                userAddress,
-                                status,
-                                started: started ? new Date(started) : null,
-                                ended: ended ? new Date(ended) : null,
-                                terminateCause: terminateCause || null,
-                                uptime,
-                                download,
-                                upload,
-                                lastAccountingPacket: lastAccountingPacket ? new Date(lastAccountingPacket) : null,
-                            });
-                        } else {
-                            // بررسی و به‌روزرسانی فقط در صورتی که مقدار جدیدی آمده باشد
-                            const updatedFields = {};
-                            if (existingSession.nasPortType !== nasPortType) updatedFields.nasPortType = nasPortType;
-                            if (existingSession.nasPortId !== nasPortId) updatedFields.nasPortId = nasPortId;
-                            if (existingSession.nasIpAddress !== nasIpAddress) updatedFields.nasIpAddress = nasIpAddress;
-                            if (existingSession.callingStationId !== callingStationId) updatedFields.callingStationId = callingStationId;
-                            if (existingSession.userAddress !== userAddress) updatedFields.userAddress = userAddress;
-                            if (existingSession.status !== status) updatedFields.status = status;
-                            if (existingSession.started?.toISOString() !== new Date(started)?.toISOString()) updatedFields.started = new Date(started);
-                            if (ended && !isNaN(new Date(ended))) {
-                                if (existingSession.ended?.toISOString() !== new Date(ended).toISOString()) {
-                                    updatedFields.ended = new Date(ended);
-                                }
-                            } if (existingSession.terminateCause !== terminateCause) updatedFields.terminateCause = terminateCause;
-                            if (existingSession.uptime !== uptime) updatedFields.uptime = uptime;
-                            if (existingSession.download !== download) updatedFields.download = download;
-                            if (existingSession.upload !== upload) updatedFields.upload = upload;
-                            if (existingSession.lastAccountingPacket?.toISOString() !== new Date(lastAccountingPacket)?.toISOString()) updatedFields.lastAccountingPacket = new Date(lastAccountingPacket);
+                    const existingSession = await Session.findOne({ where: { acctSessionId } });
 
-                            // اگر فیلدی برای آپدیت وجود داشت، اطلاعات را به‌روز کن
-                            if (Object.keys(updatedFields).length > 0) {
-                                const db = await existingSession.update(updatedFields);
-                                console.log(db);
+                    if (!existingSession) {
+                        await Session.create({
+                            userId: user.id,
+                            acctSessionId,
+                            ...otherData,
+                            started: started ? new Date(started) : null,
+                            ended: ended ? new Date(ended) : null,
+                            lastAccountingPacket: lastAccountingPacket ? new Date(lastAccountingPacket) : null,
+                        });
+                    } else {
+                        const updatedFields = {};
+
+                        for (const key in otherData) {
+                            if (existingSession[key] !== otherData[key]) {
+                                updatedFields[key] = otherData[key];
                             }
                         }
-                    }
 
+                        if (started && (!existingSession.started || existingSession.started.toISOString() !== new Date(started).toISOString())) {
+                            updatedFields.started = new Date(started);
+                        }
+                        if (ended && (!existingSession.ended || existingSession.ended.toISOString() !== new Date(ended).toISOString())) {
+                            updatedFields.ended = new Date(ended);
+                        }
+                        if (lastAccountingPacket && (!existingSession.lastAccountingPacket || existingSession.lastAccountingPacket.toISOString() !== new Date(lastAccountingPacket).toISOString())) {
+                            updatedFields.lastAccountingPacket = new Date(lastAccountingPacket);
+                        }
+
+                        if (Object.keys(updatedFields).length > 0) {
+                            await existingSession.update(updatedFields);
+                        }
+                    }
                 }
 
-                // **📌 دریافت کاربران اکتیو**
+             
+
                 const activeCommand = `user-manager/session/print where active=yes user=${user.name}`;
                 const activeResponse = await executeCommand(router, activeCommand);
+                const parsedActiveSessions = parseActiveSessions(activeResponse);
 
-                if (activeResponse) {
-                    const activeSessionRegex = /user=(\d+).*?acct-session-id="([^"]+)".*?nas-port-type=([^ ]+).*?nas-port-id="([^"]+)".*?nas-ip-address=([\d.]+).*?calling-station-id="([^"]+)".*?user-address=([\d.]+).*?status=([^ ]+).*?started=([\d-]+\s[\d:]+).*?uptime=([\w\d]+).*?download=([\w\d.]+).*?upload=([\w\d.]+).*?last-accounting-packet=([\d-]+\s[\d:]+)/gs;
-
-                    let activeMatch;
-                    while ((activeMatch = activeSessionRegex.exec(activeResponse)) !== null) {
-                        const [, userId, acctSessionId, nasPortType, nasPortId, nasIpAddress, callingStationId, userAddress, status, started, uptime, download, upload, lastAccountingPacket] = activeMatch;
-
-                        activeUsers.push({
-                            userName: user.name,
-                            roomNumber: user.roomNumber,
-                            acctSessionId,
-                            callingStationId,
-                            userAddress,
-                            started,
-                            uptime,
-                            download,
-                            upload,
-                            lastAccountingPacket,
-                        });
-                    }
+                // 🟢 افزودن تمام سشن‌های فعال این کاربر به آرایه `activeUsers`
+                for (const session of parsedActiveSessions) {
+                    if (!session.acctSessionId)continue
+                    activeUsers.push({
+                        userName: user.name,
+                        roomNumber: user.roomNumber,
+                        acctSessionId: session.acctSessionId,
+                        callingStationId: session.callingStationId,
+                        userAddress: session.userAddress,
+                        started: session.started,
+                        uptime: session.uptime,
+                        download: session.download,
+                        upload: session.upload,
+                        lastAccountingPacket: session.lastAccountingPacket,
+                    });
                 }
+
+
             }
 
             res.status(200).json(activeUsers);
@@ -351,7 +442,6 @@ class ClientController {
 
             const relatedCommand = `user-manager/user-profile/remove [find user=${user.name}]`
             const command = `user-manager/user/remove [find name=${user.name}]`
-            console.log(command, relatedCommand);
 
             const realtedResponse = await executeCommand(router, relatedCommand)
             const response = await executeCommand(router, command)

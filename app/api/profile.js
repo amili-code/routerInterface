@@ -53,8 +53,6 @@ class ProfileController {
             const relatedCommand = `user-manager/profile-limitation/add profile=${name} limitation=${limitation.name} weekdays=saturday,sunday,monday,tuesday,wednesday,thursday,friday`
             const fCommand = `user-manager/profile/add name=${name} price=${price} starts-when=${starts} validity=unlimited`
 
-            console.log(relatedCommand);
-            console.log(fCommand);
 
             const response = await executeCommand(router, fCommand);
             const relatedResponse = await executeCommand(router, relatedCommand);
@@ -102,8 +100,6 @@ class ProfileController {
                 const deleteCommand = await executeCommand(router, relatedCommand) 
                 const createCommand = `user-manager/profile-limitation/add profile=${name} limitation=${limitation.name} weekdays=saturday,sunday,monday,tuesday,wednesday,thursday,friday`
                 const confirmCommand = await executeCommand(router, createCommand) 
-                console.log(deleteCommand);
-                console.log(confirmCommand);
             }
             
             // اجرای دستور برای ویرایش پروفایل روی روتر
@@ -135,7 +131,6 @@ class ProfileController {
            
             const relatedResponse = await executeCommand(router, relatedCommand);
             const response = await executeCommand(router, command);
-            console.log(command , relatedCommand);
             // حذف از دیتابیس در صورت موفقیت
             await profile.destroy();
             res.status(200).json({ message: "پروفایل حذف شد" });

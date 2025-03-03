@@ -1,4 +1,14 @@
 function convertToJalaliDate(utcDateStr) {
+
+    if (/^\d{4}\/\d{1,2}\/\d{1,2} \| \d{2}:\d{2}$/.test(utcDateStr)) {
+        return utcDateStr;
+    }
+
+    // بررسی فرمت UTC
+    if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/.test(utcDateStr)) {
+        return "فرمت نامعتبر است!";
+    }
+
     // ایجاد شیء Date از رشته ورودی
     const date = new Date(utcDateStr);
 
@@ -66,4 +76,3 @@ function convertToJalaliDate(utcDateStr) {
 
 // تست تابع
 // const utcTime = "2025-02-15T16:40:54.000Z";
-// console.log(convertToJalaliDate(utcTime)); // خروجی: 1403/11/26 | 20:10

@@ -122,7 +122,6 @@ class LimitationController {
 
             // دریافت نتایج و فیلتر کردن روترهایی که داده‌ای برنگرداندند
             let allLimits = (await Promise.all(allLimitPromises)).filter(Boolean);
-            console.log(allLimits);
 
             // پیدا کردن محدودیت‌هایی که در دیتابیس هستند ولی روی روترها نیستند
             const missingLimitations = limitations.filter((dbLimit) => {

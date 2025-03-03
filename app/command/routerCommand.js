@@ -10,7 +10,6 @@ async function executeCommand(router, command) {
     const ssh = new NodeSSH(); // هر بار یک شیء جدید ایجاد کن
 
     try {
-        console.log(`Connecting to ${router.ip}:${router.port} as ${router.username}...`);
 
         await ssh.connect({
             host: router.ip,
@@ -22,7 +21,7 @@ async function executeCommand(router, command) {
         // اجرای دستور روی روتر
         const result = await ssh.execCommand(command);
         ssh.dispose(); // قطع اتصال
-        console.log(result);
+        
         if (result.stderr) {
             console.error(`Error executing command on ${router.ip}: ${result.stderr}`);
             return null;

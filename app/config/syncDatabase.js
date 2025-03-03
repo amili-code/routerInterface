@@ -5,6 +5,7 @@ const Profile = require("../model/Profile")
 const Client = require("../model/Client")
 const BlockedClient = require("../model/BlockedClient")
 const Session = require("../model/Session")
+const BlockedMac = require("../model/BlockedMac")
 
 async function syncDatabase() {
     await connectDB();

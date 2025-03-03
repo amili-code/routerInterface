@@ -23,7 +23,6 @@ class routerController {
 
 
   async  information(req, res) {
-    console.log(req.params.ether);
 
     const router = await Router.findByPk(req.params.id);
     if (!router) return res.status(404).json({ message: "روتر پیدا نشد" });
@@ -63,7 +62,6 @@ class routerController {
 
     async connection(req, res) {
     try {
-        console.log(req.params.id);
         const router = await Router.findByPk(req.params.id);
 
         if (!router) {
@@ -72,8 +70,12 @@ class routerController {
 
         // تست اتصال با دستور ساده
         const response = await executeCommand(router, '/ip/address/print');
-
-        res.status(200).json({ message: "اتصال موفق!", output: response });
+        if(!response)
+            res.status(500).json({ message: "اتصال ناموفق" });
+        else
+            res.status(200).json({ message: "اتصال موفق!", output: response });
+        
+        
     } catch (error) {
         res.status(500).json({ message: "اتصال ناموفق", error: error.message });
     }
@@ -81,7 +83,6 @@ class routerController {
 
     async getOne(req, res) {
         try {
-            console.log(req.params.id);
             const router = await Router.findByPk(req.params.id);
             if (!router) return res.status(404).json({ error: "روتر پیدا نشد" });
             res.status(200).json(router);
