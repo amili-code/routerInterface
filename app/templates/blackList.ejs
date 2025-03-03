@@ -1,6 +1,7 @@
 
 <div class="container-fluid py-2">
     <div class="row">
+        
         <div class="col-12">
             <div class="card my-4">
                 <div
@@ -8,26 +9,25 @@
                     <div
                         class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
                         <h6 class="text-white text-capitalize ps-1 m-2">جدول
-                            تمام ارتباطات </h6>
+                            بلک لیست</h6>
                     </div>
                 </div>
                     <div class="card-body px-0 pb-2">
                         <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0"
-                            id="table-session">
-                            <thead>
-                                <tr id="table-session-tr">
-                                </thead>
-                                <tbody id="table-session-tbody">
-                                </tbody>
+                                id="table-blocked">
+                                <thead>
+                                    <tr id="table-blocked-tr">
+                                    </thead>
+                                    <tbody id="table-blocked-tbody">
+                                    </tbody>
                             </table>
-                            <div class="container-fluid p-2" style="text-align: center;" id="table-session-pagination"></div>
+                            <div class="container-fluid p-2" style="text-align: center;" id="table-blocked-pagination"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-       
             <footer class="footer py-4  ">
                 <div class="container-fluid">
                     <div
@@ -77,7 +77,7 @@
     </div>
 
 <script>
-
-            createTable("جدول پروفایل ها" , "active" , "table-session")    
+        
+            createTable("جدول پروفایل ها" , "block-mac" , "table-blocked")    
 
 </script>

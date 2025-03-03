@@ -22,6 +22,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
   <!-- CSS Files -->
   <link id="pagestyle" href="/assets/css/material-dashboard.css?v=3.2.0" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/jalaali-js/dist/jalaali.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="/assets/js/sliderUpdate.js"></script>
@@ -150,7 +151,7 @@
         <li class="nav-item">
           <a class="nav-link text-dark" id="session-title" href="#session">
             <i class="material-symbols-rounded opacity-10">person</i>
-            <span class="nav-link-text me-1">لیست سیاه</span>
+            <span class="nav-link-text me-1">تمام ارتباطات</span>
           </a>
         </li>
         <li class="nav-item">
@@ -160,14 +161,27 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-dark" href="../pages/sign-up.html">
+          <a class="nav-link text-dark" id="mousted-title" href="#mousted">
             <i class="material-symbols-rounded opacity-10">assignment</i>
-            <span class="nav-link-text me-1">ادمین ها</span>
+            <span class="nav-link-text me-1">کاربران پر مصرف</span>
           </a>
         </li>
         <li class="nav-item">
+          <a class="nav-link text-dark" id="danger-title" href="#danger">
+            <i class="material-symbols-rounded opacity-10">leaderboard</i>
+            <span class="nav-link-text me-1">کاربران مشکوک</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-dark" id="blackList-title" href="#blackList">
+            <i class="material-symbols-rounded opacity-10">weekend</i>
+            <span class="nav-link-text me-1">بلک لیست</span>
+          </a>
+        </li>
+
+        <li class="nav-item" style="display: none;">
           <a class="nav-link text-dark" id="get-theme-class" href="../pages/sign-up.html">
-            <i class="material-symbols-rounded opacity-10">assignment</i>
+            <i class="material-symbols-rounded opacity-10">store</i>
             <span class="nav-link-text me-1">تستی</span>
           </a>
         </li>

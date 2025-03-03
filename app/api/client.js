@@ -4,6 +4,8 @@ const Limitation = require("../model/Limitation");
 const Router = require("../model/Routers");
 const Session = require("../model/Session");
 const { executeCommand } = require("../command/routerCommand");
+const { Op, fn, col, literal } = require('sequelize');
+const { sequelize } = require('../config/database');
 
 
 function parseSessionData(sessionResponse) {
@@ -101,6 +103,7 @@ function parseActiveSessions(activeResponse) {
 }
 
 
+
 class ClientController {
     // دریافت لیست همه کاربران
     async getAll(req, res) {
@@ -177,7 +180,6 @@ class ClientController {
                 attributes: [
                     'callingStationId',
                     'userAddress',
-                    'acctSessionId',
                     'started',
                     'uptime',
                     'download',
@@ -285,7 +287,142 @@ class ClientController {
         // const response = await executeCommand(router, `user-manager/session/remove [find where acct-session-id=${sessionId}]`)
         res.status(200).json(responsee)
     }
-    
+
+    async mostUsed(req, res) {
+        // دیتابیس OUI برای پیدا کردن شرکت سازنده بر اساس مک آدرس
+        const OUI_DATABASE = {
+            "00:1A:2B": "Apple Inc.",
+            "00:50:56": "VMware, Inc.",
+            "3C:5A:B4": "Google, Inc.",
+            "FC:A1:3E": "Samsung Electronics",
+            "18:AF:61": "Huawei Technologies Co.",
+            "40:B0:34": "Xiaomi Communications Co.",
+            "B4:AE:2B": "ASUS",
+            "00:15:5D": "Microsoft Corporation"
+        };
+
+        // تابع استخراج OUI از MAC Address
+        const getManufacturer = (macAddress) => {
+            if (!macAddress) return "Unknown";
+            const oui = macAddress.substring(0, 8).toUpperCase(); // گرفتن ۳ بخش اول مک
+            return OUI_DATABASE[oui] || "Unknown";
+        };
+
+        try {
+            const { startDate, endDate, limit } = req.query;
+
+            if (!startDate || !endDate || !limit) {
+                return res.status(400).json({ error: 'startDate, endDate, and limit are required' });
+            }
+
+            const topUsers = await Session.findAll({
+                attributes: [
+                    'callingStationId',
+                    'userAddress',  // چون در دیتابیس `nasIpAddress` نداریم
+                    [sequelize.fn('SUM', sequelize.col('download')), 'totalDownload'],
+                    [sequelize.fn('SUM', sequelize.col('upload')), 'totalUpload'],
+                    [sequelize.fn('SUM', sequelize.literal('download + upload')), 'totalUsage']
+                ],
+                where: {
+                    started: { [Op.gte]: new Date(startDate) },
+                    ended: { [Op.lte]: new Date(endDate) }
+                },
+                group: ['callingStationId', 'userAddress'],  // گروه‌بندی بر اساس MAC و IP
+                order: [[sequelize.literal('totalUsage'), 'DESC']],
+                limit: parseInt(limit), // محدود کردن خروجی
+                raw: true
+            });
+
+            // تبدیل خروجی و اضافه کردن `modifier`
+            const formattedUsers = topUsers.map(user => ({
+                callingStationId: user.callingStationId,
+                userAddress: user.userAddress,
+                totalDownload: user.totalDownload,
+                totalUpload: user.totalUpload,
+                totalUsage: user.totalUsage,
+                modifier: getManufacturer(user.callingStationId) // استخراج شرکت سازنده
+            }));
+
+            res.json(formattedUsers);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+
+    async dangeresMac(req, res) {
+        const OUI_DATABASE = {
+            "00:1A:2B": "Apple Inc.",
+            "00:50:56": "VMware, Inc.",
+            "3C:5A:B4": "Google, Inc.",
+            "FC:A1:3E": "Samsung Electronics",
+            "18:AF:61": "Huawei Technologies Co.",
+            "40:B0:34": "Xiaomi Communications Co.",
+            "B4:AE:2B": "ASUS",
+            "00:15:5D": "Microsoft Corporation"
+        };
+
+        // تابع استخراج OUI از MAC Address
+        const getManufacturer = (macAddress) => {
+            if (!macAddress) return "Unknown";
+            const oui = macAddress.substring(0, 8).toUpperCase(); // گرفتن ۳ بخش اول مک
+            return OUI_DATABASE[oui] || "Unknown";
+        };
+     
+        try {
+            const { startDate, endDate } = req.query;
+
+            if (!startDate || !endDate) {
+                return res.status(400).json({ error: 'startDate and endDate are required' });
+            }
+
+            // دریافت تمام سشن‌های داخل بازه زمانی
+            const sessions = await Session.findAll({
+                attributes: ['callingStationId'],
+                include: [
+                    {
+                        model: User,
+                        attributes: ['fullName']
+                    }
+                ],
+                where: {
+                    started: { [Op.gte]: new Date(startDate) },
+                    ended: { [Op.lte]: new Date(endDate) }
+                },
+                raw: true
+            });
+
+
+            // دسته‌بندی داده‌ها بر اساس MAC Address
+            const macClients = {};
+            for (const { callingStationId, ['Client.fullName']: clientFullName } of sessions) {
+                if (!macClients[callingStationId]) macClients[callingStationId] = { clients: new Set(), vendor: null };
+                macClients[callingStationId].clients.add(clientFullName);
+            }
+
+            // دریافت نام شرکت برای هر MAC Address
+            const macEntries = Object.entries(macClients);
+            await Promise.all(macEntries.map(async ([mac, data]) => {
+                data.vendor = await getManufacturer(mac);
+            }));
+
+            // فیلتر کردن MAC Addressهایی که بیشتر از یک کلاینت دارند
+            const result = macEntries
+                .filter(([_, data]) => data.clients.size > 1)
+                .map(([mac, data]) => ({
+                    callingStationId: mac,
+                    uniqueClients: Array.from(data.clients),
+                    totalClients: data.clients.size,
+                    modifier: data.vendor
+                }))
+                .sort((a, b) => b.totalClients - a.totalClients);
+
+            res.json(result);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
 
     async activeUser(req, res) {
         try {
@@ -350,7 +487,7 @@ class ClientController {
                     }
                 }
 
-             
+
 
                 const activeCommand = `user-manager/session/print where active=yes user=${user.name}`;
                 const activeResponse = await executeCommand(router, activeCommand);
@@ -358,7 +495,7 @@ class ClientController {
 
                 // 🟢 افزودن تمام سشن‌های فعال این کاربر به آرایه `activeUsers`
                 for (const session of parsedActiveSessions) {
-                    if (!session.acctSessionId)continue
+                    if (!session.acctSessionId) continue
                     activeUsers.push({
                         userName: user.name,
                         roomNumber: user.roomNumber,
@@ -369,7 +506,6 @@ class ClientController {
                         uptime: session.uptime,
                         download: session.download,
                         upload: session.upload,
-                        lastAccountingPacket: session.lastAccountingPacket,
                     });
                 }
 

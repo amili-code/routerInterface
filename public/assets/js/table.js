@@ -146,6 +146,24 @@ function translateFields(fieldsArray) {
             case "comment":
                 persianWord = "توضیحات"
                 break;
+            case "totalDownload":
+                persianWord = "مقدار کل دانلود"
+                break;
+            case "totalUpload":
+                persianWord = "مقدار کل اپلود"
+                break;
+            case "totalUsage":
+                persianWord = "مقدار کل استفاده"
+                break;
+            case "modifier":
+                persianWord = "شرکت سازنده"
+                break;
+            case "uniqueClients":
+                persianWord = "نام کاربران استفاده شده"
+                break;
+            case "totalClients":
+                persianWord = "تعداد کاربران"
+                break;
             default:
                 break;
         }
@@ -357,11 +375,11 @@ function createTrTbody(data, id, api) {
             tbody += `<td class="align-middle text-center text-sm">
                     <button type="button" onClick="removeActivate('${item["userAddress"]}' , '${item["acctSessionId"]}' , '${item["callingStationId"]}')" class="badge badge-sm bg-gradient-danger " style="border:none">قطع ارتباط</button>
                     </td></tr>`
-        } else if (id == "table-session") {
+        } else if (id == "table-danger") {
             tbody += `<td class="align-middle text-center text-sm">
-                    <button type="button" onClick="addBlockList('${item["userAddress"]}' , '${item["clientFullName"]}' , '${item["callingStationId"]}')" class="badge badge-sm bg-gradient-danger " style="border:none">مسدود کردن کاربر</button>
+                    <button type="button" onClick="addBlockList('${item["callingStationId"]}')" class="badge badge-sm bg-gradient-danger " style="border:none">مسدود کردن کاربر</button>
                     </td></tr>`
-        } else if (id == "table-terminated") {
+        } else if (id == "table-session" || id == "table-terminated" || id == "table-mousted") {
             tbody += `</tr>`
         } else if (id == "table-blocked") {
             tbody += `<td class="align-middle text-center text-sm">
@@ -392,32 +410,32 @@ function createTrThead(fieldsArray, id) {
     tr.innerHTML = ''
     fieldsArray.forEach(field => {
         tr.innerHTML += `
-            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">${field}</th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="text-align:center">${field}</th>
         `
     });
     if (id == "table-block-client") {
         tr.innerHTML += `
-            <th class="text-secondary text-xxs font-weight-bolder opacity-7">بازگردانی</th>
+            <th class="text-secondary text-xxs font-weight-bolder opacity-7 style="text-align:center"">بازگردانی</th>
         `
     } else if (id == "table-active") {
         tr.innerHTML += `
-                    <th class="text-secondary text-xxs font-weight-bolder opacity-7">قطع ارتباط</th>
+                    <th class="text-secondary text-xxs font-weight-bolder opacity-7 style="text-align:center"">قطع ارتباط</th>
         `
-    } else if (id == "table-session") {
+    } else if (id == "table-danger") {
         tr.innerHTML += `
-            <th class="text-secondary text-xxs font-weight-bolder opacity-7">افزودن مسدودیت</th>
+            <th class="text-secondary text-xxs font-weight-bolder opacity-7 style="text-align:center"">افزودن مسدودیت</th>
         `
     } else if (id == "table-blocked") {
         tr.innerHTML += `
-            <th class="text-secondary text-xxs font-weight-bolder opacity-7">نمایش تمام فعالیت ها</th>
-            <th class="text-secondary text-xxs font-weight-bolder opacity-7">بازگردانی این دیوایس</th>
+            <th class="text-secondary text-xxs font-weight-bolder opacity-7 style="text-align:center"">نمایش تمام فعالیت ها</th>
+            <th class="text-secondary text-xxs font-weight-bolder opacity-7 style="text-align:center"">بازگردانی این دیوایس</th>
         `
-    } else if (id == "table-terminated") {
+    } else if (id == "table-session" || id == "table-terminated" || id == "table-mousted") {
         tr.innerHTML += ``
     } else {
         tr.innerHTML += `
-            <th class="text-secondary text-xxs font-weight-bolder opacity-7">ویرایش</th>
-            <th class="text-secondary text-xxs font-weight-bolder opacity-7">حذف</th>
+            <th class="text-secondary text-xxs font-weight-bolder opacity-7 style="text-align:center"">ویرایش</th>
+            <th class="text-secondary text-xxs font-weight-bolder opacity-7 style="text-align:center"">حذف</th>
         `
     }
 }
@@ -638,6 +656,24 @@ function translator(data) {
             returnedData = "توضیحات"
             break;
 
+        case "totalDownload":
+            returnedData = "مقدار کل دانلود"
+            break;
+        case "totalUpload":
+            returnedData = "مقدار کل اپلود"
+            break;
+        case "totalUsage":
+            returnedData = "مقدار کل استفاده"
+            break;
+        case "modifier":
+            returnedData = "شرکت سازنده"
+            break;
+        case "uniqueClients":
+            returnedData = "نام کاربران استفاده شده"
+            break;
+        case "totalClients":
+            returnedData = "تعداد کاربران"
+            break;
         default:
             break;
     }
@@ -881,7 +917,7 @@ function closeModal() {
 }
 
 
-function addBlockList(ip, username, mac) {
+function addBlockList(mac) {
     // ایجاد و نمایش مودال تأیید
     const modal = document.createElement("div");
     modal.id = "modal-overlay";

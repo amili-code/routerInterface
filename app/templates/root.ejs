@@ -12,6 +12,9 @@
       document.getElementById("block-client").style.display = "none"
       document.getElementById("active").style.display = "none"
       document.getElementById("session").style.display = "none"
+      document.getElementById("mousted").style.display = "none"
+      document.getElementById("danger").style.display = "none"
+      document.getElementById("blackList").style.display = "none"
     }
 
 
@@ -72,6 +75,24 @@
               displayNone()
               document.getElementById("session").style.display = "block"
               break;
+            case "mousted":
+              navUpdate("کاربران پر مصرف")
+              sliderUpdate("mousted")
+              displayNone()
+              document.getElementById("mousted").style.display = "block"
+              break;
+            case "danger":
+              navUpdate("کاربران مشکوک")
+              sliderUpdate("danger")
+              displayNone()
+              document.getElementById("danger").style.display = "block"
+              break;
+            case "blackList":
+              navUpdate("بلک لیست")
+              sliderUpdate("blackList")
+              displayNone()
+              document.getElementById("blackList").style.display = "block"
+              break;
             
               default:
           navUpdate("داشبورد")
@@ -103,8 +124,20 @@
 <div id="active" style="display: none;">
   <%- include('./active'); %>
 </div>
+
 <div id="session" style="display: none;">
   <%- include('./session'); %>
+</div>
+
+<div id="mousted" style="display: none;">
+  <%- include('./mousted'); %>
+</div>
+
+<div id="danger" style="display: none;">
+  <%- include('./danger'); %>
+</div>
+<div id="blackList" style="display: none;">
+  <%- include('./blackList'); %>
 </div>
 
 <div id="client" style="display: none;">

@@ -26,6 +26,7 @@
     "socket.io-client": "^4.7.5"
   },
   "dependencies": {
+    "axios": "^1.8.1",
     "bcrypt": "^5.1.1",
     "express-session": "^1.18.1",
     "fluent-ffmpeg": "^2.1.3",
