@@ -13,7 +13,7 @@ class Web {
     // root(req, res) { this.renderPage(req, res, "root"); }
     root(req, res) { res.render('root')}
     // routers(req, res) { res.render('routers')}
-
+    users(req , res) {res.render('users/root')}
 
     login(req, res) { res.render("login", {}); }
     register(req, res) { res.render("register", {}); }

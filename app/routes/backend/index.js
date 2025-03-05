@@ -57,6 +57,7 @@ router.get('/update-session', clientController.updataSession.bind(clientControll
 router.put('/client/:id', clientController.update.bind(clientController))
 router.delete('/client/:id', clientController.delete.bind(clientController))
 router.get('/mac-dangeres', clientController.dangeresMac.bind(clientController))
+router.get('/loger', clientController.loger.bind(clientController))
 
 router.get('/block-client', blockedClientController.getAll.bind(blockedClientController))
 router.get('/useage', blockedClientController.useage.bind(blockedClientController))

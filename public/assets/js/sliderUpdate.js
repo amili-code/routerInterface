@@ -21,7 +21,7 @@ function navUpdate(page) {
 
 
 function sliderClassRestart(page) {
-    let idListest = ["blackList-title","danger-title","dashboard-title", "routers-title", "limitation-title", "profile-title", "client-title", "block-client-title", "active-title", "session-title", "mousted-title"]
+    let idListest = ["req-title","loger-title","blackList-title","danger-title","dashboard-title", "routers-title", "limitation-title", "profile-title", "client-title", "block-client-title", "active-title", "session-title", "mousted-title"]
     const elem = document.getElementById("get-theme-class")
     idListest.forEach(id => {
 

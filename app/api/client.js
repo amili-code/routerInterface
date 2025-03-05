@@ -619,6 +619,90 @@ class ClientController {
             res.status(500).json({ error: error.message });
         }
     }
+
+
+   async  loger(req, res) {
+    try {
+        const { userName, year, month, day } = req.query;
+        if (!userName) return res.status(400).json({ error: 'userName is required' });
+
+        // دریافت تمام سشن‌های کاربر
+        const sessions = await Session.findAll({
+            where: { userName },
+            raw: true
+        });
+
+        if (!sessions.length) return res.json({ message: 'No data found' });
+
+        let groupedData = {};
+
+        sessions.forEach(session => {
+            const sessionDate = new Date(session.started);
+            const sessionYear = sessionDate.getFullYear();
+            const sessionMonth = sessionDate.getMonth() + 1;
+            const sessionDay = sessionDate.getDate();
+            const sessionHour = sessionDate.getHours();
+            const sessionMinute = sessionDate.getMinutes();
+
+            if (!groupedData[sessionYear]) {
+                groupedData[sessionYear] = { uptime: 0, download: 0, upload: 0 };
+            }
+            if (year && sessionYear != year) return;
+
+            groupedData[sessionYear].uptime += session.uptime;
+            groupedData[sessionYear].download += session.download;
+            groupedData[sessionYear].upload += session.upload;
+
+            if (month) {
+                if (!groupedData[sessionYear][sessionMonth]) {
+                    groupedData[sessionYear][sessionMonth] = { uptime: 0, download: 0, upload: 0 };
+                }
+                if (sessionMonth != month) return;
+                groupedData[sessionYear][sessionMonth].uptime += session.uptime;
+                groupedData[sessionYear][sessionMonth].download += session.download;
+                groupedData[sessionYear][sessionMonth].upload += session.upload;
+            }
+
+            if (day) {
+                if (!groupedData[sessionYear][sessionMonth][sessionDay]) {
+                    groupedData[sessionYear][sessionMonth][sessionDay] = {};
+                }
+                if (sessionDay != day) return;
+                const timeKey = `${String(sessionHour).padStart(2, '0')}:${String(sessionMinute).padStart(2, '0')}`;
+                groupedData[sessionYear][sessionMonth][sessionDay][timeKey] = {
+                    uptime: session.uptime,
+                    download: session.download,
+                    upload: session.upload
+                };
+            }
+        });
+
+        if (year && !month && !day) {
+            return res.json(groupedData[year]);
+        } else if (year && month && !day) {
+            let monthlyData = {};
+            for (let i = 1; i <= 12; i++) {
+                monthlyData[i] = groupedData[year]?.[i] || { uptime: 0, download: 0, upload: 0 };
+            }
+            return res.json(monthlyData);
+        } else if (year && month && day) {
+            let dailyData = {};
+            for (let i = 1; i <= 31; i++) {
+                dailyData[i] = groupedData[year]?.[month]?.[i] || { uptime: 0, download: 0, upload: 0 };
+            }
+            return res.json(dailyData);
+        }
+
+        res.json(groupedData);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+    }
+
+
+
+    
 }
 
 module.exports = new ClientController();

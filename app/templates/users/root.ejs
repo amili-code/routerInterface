@@ -1,0 +1,296 @@
+<!--
+=========================================================
+* Material Dashboard 3 - v3.2.0
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/material-dashboard
+* Copyright 2024 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://www.creative-tim.com/license)
+* Coded by Creative Tim
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-->
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+  <title>
+    ثبت درخواست
+  </title>
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900" />
+  <!-- Nucleo Icons -->
+  <link href="/assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="/assets/css/nucleo-svg.css" rel="stylesheet" />
+  <!-- Font Awesome Icons -->
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <!-- Material Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <!-- CSS Files -->
+  <link id="pagestyle" href="/assets/css/material-dashboard.css?v=3.2.0" rel="stylesheet" />
+</head>
+<style>
+    @font-face {
+        font-family: peyda;
+        src: url(/assets/fonts/PeydaWeb-Bold.woff2);
+    }
+
+
+    *{
+        font-family: peyda;
+    }
+</style>
+
+<body class="">
+
+  <main class="main-content  mt-0">
+    <section>
+      <div class="page-header min-vh-100">
+        <div class="container">
+          <div class="row">
+            <div class="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 start-0 text-center justify-content-center flex-column">
+              <div class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center" style="background-image: url('/assets/img/illustrations/illustration-signup.jpg'); background-size: cover;">
+              </div>
+            </div>
+            <div class="col-xl-4 col-lg-5 col-md-7 d-flex flex-column ms-auto me-auto ms-lg-auto me-lg-5">
+              <div class="card card-plain">
+                <div class="card-header">
+                  <h4 class="font-weight-bolder">اطلاعات زیر را وارد کنید</h4>
+                  <p class="mb-0">لطفا اطلاعات رو به درستی وارد کنید.</p>
+                </div>
+                <div class="card-body">
+                  <form role="form" id="forme">
+                    <div class="input-group input-group-outline mb-3">
+                      <label class="form-label">نام</label>
+                      <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="input-group input-group-outline mb-3">
+                      <label class="form-label">نام خانوادگی</label>
+                      <input type="text" name="family" class="form-control" required>
+                    </div>
+                    <div class="input-group input-group-outline mb-3">
+                      <label class="form-label">کد ملی</label>
+                      <input type="number" name="code" class="form-control" required>
+                    </div>
+                    <div class="input-group input-group-outline mb-3">
+                      <label class="form-label">شماره اتاق</label>
+                      <input type="number" name="room" class="form-control" required>
+                    </div>
+                    <div class="input-group input-group-outline mb-3">
+                      <label class="form-label">شماره تماس</label>
+                      <input type="number" name="phone" class="form-control" required>
+                    </div>
+                    <div class="input-group input-group-outline mb-3">
+                      <label class="form-label">تعداد اعضا</label>
+                      <input type="number" name="count" class="form-control" required>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <br>
+                    <div class="input-group input-group-outline mb-3">
+                      <!-- <label class="form-label">انتخاب بسته مد نظر</label> -->
+                      <select id="profileSelect" class="form-select mb-3">
+                            <option value="">-- انتخاب پروفایل --</option>
+                        </select>
+                    </div>
+                    <div class="form-check form-check-info text-start ps-0">
+                      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" >
+                      <label class="form-check-label" for="flexCheckDefault">
+                        <a href="javascript:;" class="text-dark font-weight-bolder">قوانین</a> را تایید می کنم
+                      </label>
+                    </div>
+                    <!-- <div class="text-center">
+                      <button type="button" class="btn btn-lg bg-gradient-dark btn-lg w-100 mt-4 mb-0">ثبت اطلاعات</button>
+                    </div> -->
+                    <input type="submit" class="btn btn-lg bg-gradient-dark btn-lg w-100 mt-4 mb-0"  value="ثبت اطلاعات" required>
+                  </form>
+                </div>
+                <div class="card-footer text-center pt-0 px-lg-2 px-1">
+                  <p class="mb-2 text-sm mx-auto">
+                    اگر اکانتتون تایید شد
+                    <a href="http://192.168.22.1" class="text-primary text-gradient font-weight-bold">اتصال به اینترنت</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <!--   Core JS Files   -->
+  <script src="/assets/js/core/popper.min.js"></script>
+  <script src="/assets/js/core/bootstrap.min.js"></script>
+  <script src="/assets/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="/assets/js/plugins/smooth-scrollbar.min.js"></script>
+  <script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+  </script>
+  <!-- Github buttons -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="/assets/js/material-dashboard.min.js?v=3.2.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <script>
+
+function validateForm(data) {
+    let isValid = true;
+
+
+
+
+    // بررسی خالی بودن فیلدها
+    for (const [key, value] of Object.entries(data)) {
+        if (!value && key !== "profileSelect") { // سلکت باکس به طور جداگانه بررسی می‌شود
+            alert(`فیلد "${key}" نمی‌تواند خالی باشد.`);
+            isValid = false;
+        }
+    }
+
+    // بررسی انتخاب سلکت باکس
+    if (!data.profileSelect) {
+        alert("لطفاً یک پروفایل انتخاب کنید.");
+        isValid = false;
+    }
+
+    // بررسی طول کد ملی (10 رقم)
+    if (data.code && data.code.toString().length !== 10) {
+        alert("کد ملی باید 10 رقم باشد.");
+        isValid = false;
+    }
+
+    // بررسی شماره تلفن (پترن 09*********)
+    const phonePattern = /^09\d{9}$/;
+    if (data.phone && !phonePattern.test(data.phone)) {
+        alert("شماره تلفن باید به صورت 09********* باشد.");
+        isValid = false;
+    }
+
+    // بررسی تعداد اعضا (بین 1 تا 5)
+    if (data.count && (data.count < 1 || data.count > 5)) {
+        alert("تعداد اعضا باید بین 1 تا 5 باشد.");
+        isValid = false;
+    }
+
+    return isValid; // بازگشت وضعیت اعتبارسنجی
+}
+
+
+    document.getElementById(`forme`).addEventListener("submit" ,async e=>{
+         e.preventDefault(); // جلوگیری از ارسال فرم به صورت پیش‌فرض
+
+        // دریافت داده‌های فرم
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        if (!validateForm(data)) {
+            return; // اگر والیدیشن ناموفق بود، فرآیند متوقف می‌شود
+        }
+
+        // ارسال داده‌ها
+        await reqSender(data);
+    })
+
+    function weekDaysTranslate(str) {
+        const daysMap = {
+            "saturday": "شنبه",
+            "sunday": "یکشنبه",
+            "monday": "دوشنبه",
+            "tuesday": "سه‌شنبه",
+            "wednesday": "چهارشنبه",
+            "thursday": "پنج‌شنبه",
+            "friday": "جمعه"
+        };
+
+        const daysArray = str.split(",");
+        // جدا کردن بر اساس کاما
+        const translatedDays = daysArray.map(day => daysMap[day] || day); // ترجمه روزها
+
+        return translatedDays.join("، "); // تبدیل به رشته فارسی با جداکننده مناسب
+    }
+
+    function convertTimeToFarsi(input) {
+        // Regular expression برای تفکیک عدد و واحد زمان
+        const regex = /^(\d+)([hmd])$/;
+        const match = input.match(regex);
+
+        if (!match) {
+            return "ورودی نامعتبر است"; // اگر فرمت ورودی نادرست باشد
+        }
+
+        const number = match[1]; // عدد
+        const unit = match[2]; // واحد زمان
+
+        // تبدیل واحد زمان به فارسی
+        const persianUnits = {
+            h: "ساعت",
+            m: "دقیقه",
+            d: "روز"
+        };
+
+        // برگرداندن نتیجه به صورت فارسی
+        return `${number} ${persianUnits[unit]}`;
+    }
+
+    async function fetchProfiles() {
+                try {
+                    const profileResponse = await axios.get('http://192.168.1.2:5000/api/profile');
+                    const limitationResponse = await axios.get('http://192.168.1.2:5000/api/limitation');
+
+                    const profiles = profileResponse.data;
+                    const limitations = limitationResponse.data;
+
+                    const persianDays = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'];
+
+                    const select = document.getElementById('profileSelect');
+                    profiles.forEach(profile => {
+                        const limitation = limitations.find(lim => lim.name === profile.limitationName);
+                        if (limitation) {
+                            const days = weekDaysTranslate(profile.weekDays);
+                            const time = convertTimeToFarsi(limitation.timeLimit)
+                            const option = document.createElement('option');
+                            option.value = profile.id;
+                            option.text = `بازه زمانی:${time} | قیمت: ${profile.price} تومان | حجم: ${limitation.download}GB | پهنای باند: ${limitation.upload}Mbps | روزها: ${days}`;
+                            select.appendChild(option);
+                        }
+                    });
+                } catch (error) {
+                    console.error('خطا در دریافت داده‌ها:', error);
+                }
+            }
+
+
+    fetchProfiles()
+
+    async function reqSender(data){
+        try {
+            const response = await axios.post('http://192.168.1.2:5000/api/reqAceptor', data);
+
+            if (response.status === 200) {
+                alert("اطلاعات با موفقیت ثبت شد.نتیجه به شماره شما ارسال می شود");
+            } else {
+                alert("خطا در ثبت اطلاعات.");
+            }
+        } catch (error) {
+            console.error('خطا در ارسال درخواست:', error);
+            alert("خطایی رخ داد. لطفاً دوباره تلاش کنید.");
+        }
+    }
+
+  </script>
+
+</body>
+
+</html>
