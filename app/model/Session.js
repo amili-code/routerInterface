@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const Client = require('./Client');
 
 const Session = sequelize.define('Session', {
     id: {
@@ -8,14 +7,9 @@ const Session = sequelize.define('Session', {
         autoIncrement: true,
         primaryKey: true,
     },
-    userId: {
-        type: DataTypes.INTEGER,
+    userName: {
+        type: DataTypes.STRING,
         allowNull: false,
-        references: {
-            model: Client,
-            key: 'id',
-        },
-        onDelete: 'CASCADE',
     },
     acctSessionId: {
         type: DataTypes.STRING,
@@ -38,9 +32,5 @@ const Session = sequelize.define('Session', {
     timestamps: true,
     tableName: 'Sessions'
 });
-
-// ارتباط با Client
-Client.hasMany(Session, { foreignKey: 'userId' });
-Session.belongsTo(Client, { foreignKey: 'userId' });
 
 module.exports = Session;

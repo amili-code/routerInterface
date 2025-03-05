@@ -6,6 +6,9 @@ const Router = require("../model/Routers");
 const BlockedMac = require("../model/BlockedMac");
 const { executeCommand } = require("../command/routerCommand");
 const Session = require("../model/Session");
+const { Op , Sequelize } = require('sequelize');
+const moment = require('jalali-moment'); // برای تبدیل تاریخ
+
 
 class BlockedClientController {
     // دریافت لیست تمام کاربران مسدود شده
@@ -58,6 +61,49 @@ class BlockedClientController {
         }
     }
 
+    async useage(req, res) {
+        try {
+            // تاریخ ۷ روز قبل را محاسبه کن
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+            // دریافت داده‌ها از دیتابیس
+            const sessions = await Session.findAll({
+                attributes: [
+                    [Sequelize.fn('DATE', Sequelize.col('started')), 'date'],
+                    [Sequelize.fn('SUM', Sequelize.col('download')), 'totalDownload'],
+                    [Sequelize.fn('SUM', Sequelize.col('upload')), 'totalUpload']
+                ],
+                where: {
+                    started: {
+                        [Op.gte]: sevenDaysAgo
+                    }
+                },
+                group: ['date'],
+                order: [[Sequelize.literal('date'), 'ASC']]
+            });
+
+            // پردازش داده‌ها
+            const result = sessions.map(session => {
+                const gregorianDate = session.getDataValue('date'); // تاریخ میلادی
+                const persianDate = moment(gregorianDate).locale('fa').format('YYYY-MM-DD'); // تبدیل به شمسی
+                const persianWeekday = moment(gregorianDate).locale('fa').format('dddd'); // نام روز هفته
+
+                return {
+                    date: persianDate,
+                    weekday: persianWeekday,
+                    totalDownload: session.getDataValue('totalDownload'),
+                    totalUpload: session.getDataValue('totalUpload'),
+                    totalTraffic: session.getDataValue('totalDownload') + session.getDataValue('totalUpload'),
+                };
+            });
+
+            res.json(result);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'خطایی رخ داده است.' });
+        }
+    }
 
     // دریافت اطلاعات یک کاربر مسدود شده بر اساس ID
     async getOne(req, res) {
@@ -107,7 +153,7 @@ class BlockedClientController {
             }); // دریافت تمام داده‌ها
 
             if (!blockedMacs.length) {
-                return res.status(404).json({ message: "هیچ MAC بلاک شده‌ای یافت نشد!" });
+                return res.status(200).json({ message: "هیچ MAC بلاک شده‌ای یافت نشد!" });
             }
 
             res.json(blockedMacs);

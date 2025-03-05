@@ -48,14 +48,64 @@
                                 <input type="number" name="price"
                                     class="form-control">
                             </div>
-                            <div
-                                class="col input-group input-group-outline my-3">
-                                <label
-                                    class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">بازه
-                                    زمانی</label>
-                                <input type="text" name="weekDays"
-                                    class="form-control">
+                           <div id="hhhh" class="col input-group input-group-outline my-3">
+                                <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    بازه زمانی
+                                </label>
+                                <div class="dropdown">
+                                    <div id="weekDaysDropdown" class="dropdown-toggle form-control" onclick="toggleDropdown()">
+                                        تمام روزهای هفته
+                                    </div>
+                                    <div id="weekDaysList" class="dropdown-menu">
+                                        <label><input type="checkbox" value="شنبه"> شنبه</label>
+                                        <label><input type="checkbox" value="یکشنبه"> یکشنبه</label>
+                                        <label><input type="checkbox" value="دوشنبه"> دوشنبه</label>
+                                        <label><input type="checkbox" value="سه‌شنبه"> سه‌شنبه</label>
+                                        <label><input type="checkbox" value="چهارشنبه"> چهارشنبه</label>
+                                        <label><input type="checkbox" value="پنج‌شنبه"> پنج‌شنبه</label>
+                                        <label><input type="checkbox" value="جمعه"> جمعه</label>
+                                    </div>
+                                </div>
                             </div>
+                            <style>
+                                .dropdown {
+                                    position: relative;
+                                    width: 100%;
+                                }
+
+                                .dropdown-toggle {
+                                    cursor: pointer;
+                                    padding: 8px;
+                                    border: 1px solid #ccc;
+                                    border-radius: 5px;
+                                    background-color: white;
+                                }
+
+                                .dropdown-menu {
+                                    display: none;
+                                    position: absolute;
+                                    width: 100%;
+                                    background-color: white;
+                                    border: 1px solid #ccc;
+                                    border-radius: 5px;
+                                    padding: 10px;
+                                    z-index: 10;
+                                }
+
+                                .dropdown-menu label {
+                                    display: block;
+                                    padding: 5px;
+                                    cursor: pointer;
+                                }
+
+                                .dropdown-menu input {
+                                    margin-right: 5px;
+                                }
+
+                                .dropdown-menu.show {
+                                    display: block;
+                                }
+                            </style>
                             <div
                                 class="col input-group input-group-outline my-3">
                                 <label
@@ -149,7 +199,6 @@
             </div>
         </footer>
     </div>
-
     <script> 
     async function createInputProfileForm(){
         let limitation = await apiRequest("/limitation");
@@ -166,21 +215,57 @@
                     </select>
         `
     }
-        
     createInputProfileForm()
+    
+    const daysMap = {
+        "شنبه": "saturday",
+        "یکشنبه": "sunday",
+        "دوشنبه": "monday",
+        "سه‌شنبه": "tuesday",
+        "چهارشنبه": "wednesday",
+        "پنج‌شنبه": "thursday",
+        "جمعه": "friday"
+    };
+
+    function toggleDropdown() {
+        document.getElementById("weekDaysList").classList.toggle("show");
+        document.getElementById("hhhh").classList.add('focused')
+        document.getElementById("hhhh").classList.add('is-focused')
+    }
+
+    document.addEventListener("click", function (event) {
+        if (!event.target.closest(".dropdown")) {
+            document.getElementById("weekDaysList").classList.remove("show");
+        }
+    });
+
+    document.querySelectorAll("#weekDaysList input[type='checkbox']").forEach((checkbox) => {
+        checkbox.addEventListener("change", function () {
+            const selectedDays = Array.from(document.querySelectorAll("#weekDaysList input[type='checkbox']:checked"))
+                .map(input => input.value);
+
+            document.getElementById("weekDaysDropdown").innerText = selectedDays.length ? selectedDays.join(", ") : "تمام روزهای هفته";
+        });
+    });
+
     createTable("جدول پروفایل ها" , "profile" , "table-profile")
        document.getElementById("profileForm").addEventListener("submit", function(event) {
         event.preventDefault(); // جلوگیری از ارسال فرم به صورت پیش‌فرض
 
         // دریافت داده‌های فرم
+
+        
+        
         const formData = new FormData(this);
         const data = Object.fromEntries(formData.entries());
+        const selectedDays = Array.from(document.querySelectorAll("#weekDaysList input[type='checkbox']:checked"))
+            .map(input => daysMap[input.value])
+            .join(",");
 
+        data.weekDays = selectedDays || "saturday,sunday,monday,tuesday,wednesday,thursday,friday"; 
+        
         // ارسال داده‌ها
         createprofile(data);
-        setTimeout(() => {
-            createTable("جدول پروفایل ها" , "profile" , "table-profile")
-        }, 4000);
     });
 
     async function createprofile(data) {
@@ -201,6 +286,8 @@
                 popup: "animate__animated animate__fadeOutUp"
             }
         });
+        createTable("جدول پروفایل ها" , "profile" , "table-profile")
+        createInputClientForm()
         document.getElementById("profileForm").reset();
      } else{
          Swal.fire({

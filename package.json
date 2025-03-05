@@ -33,6 +33,8 @@
     "fs-extra": "^11.3.0",
     "hijri-converter": "^1.1.1",
     "jalaali-js": "^1.2.7",
+    "jalali-moment": "^3.3.11",
+    "moment": "^2.30.1",
     "moment-hijri": "^3.0.0",
     "moment-jalaali": "^0.10.4",
     "node-ssh": "^13.2.0",

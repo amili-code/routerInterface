@@ -41,25 +41,16 @@ class ProfileController {
             const router = limitation.Router;
             if (!router) return res.status(404).json({ error: "روتر مرتبط پیدا نشد" });
 
-            let starts = ""
+            let starts = startDate === "first_use" ? "assigned" : "first-auth";
 
-            if (startDate != "first_use") {
-                starts = "first-auth"
-            } else {
-                starts = "assigned"
-            }
+            // ساخت دستور مرتبط با روتر
+            const relatedCommand = `user-manager/profile-limitation/add profile=${name} limitation=${limitation.name} weekdays=${weekDays}`;
+            const fCommand = `user-manager/profile/add name=${name} price=${price} starts-when=${starts} validity=unlimited`;
 
-            // اجرای دستور افزودن پروفایل روی روتر
-            const relatedCommand = `user-manager/profile-limitation/add profile=${name} limitation=${limitation.name} weekdays=saturday,sunday,monday,tuesday,wednesday,thursday,friday`
-            const fCommand = `user-manager/profile/add name=${name} price=${price} starts-when=${starts} validity=unlimited`
-
-
-            const response = await executeCommand(router, fCommand);
-            const relatedResponse = await executeCommand(router, relatedCommand);
-            // if (!response) throw new Error("خطا در افزودن پروفایل روی روتر");
+            await executeCommand(router, fCommand);
+            await executeCommand(router, relatedCommand);
 
             const profile = await Profile.create(req.body);
-            // ذخیره در دیتابیس بعد از موفقیت در روتر
             res.status(200).json(profile);
         } catch (error) {
             res.status(400).json({ error: error.message });

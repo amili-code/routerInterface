@@ -50,6 +50,10 @@ const Client = sequelize.define('Client', {
             min: { args: [1], msg: "تعداد کاربران نمی‌تواند کمتر از ۱ باشد" },
         },
     },
+    star: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: 0,
+    },
 }, {
     timestamps: true,
     tableName: 'Clients'

@@ -46,6 +46,9 @@ function translateFields(fieldsArray) {
             case "tx":
                 persianWord = "TX"
                 break;
+            case "star":
+                persianWord = "وضعیت ستاره"
+                break;
 
             case "rx":
                 persianWord = "RX"
@@ -164,6 +167,12 @@ function translateFields(fieldsArray) {
             case "totalClients":
                 persianWord = "تعداد کاربران"
                 break;
+            case "user":
+                persianWord = "نام کاربری"
+                break;
+            case "nasIpAddress":
+                persianWord = "ای پی دستگاه"
+                break;
             default:
                 break;
         }
@@ -175,7 +184,7 @@ function translateFields(fieldsArray) {
     return persianArrey
 }
 
-const paginationNumber = 5;
+const paginationNumber = 7;
 let filteredData = null;
 
 
@@ -184,10 +193,10 @@ let filteredData = null;
 
 
 async function pagination(id, currentPage, totalPages) {
-    if (totalPages == 0 || totalPages ==1)  return
-    
-    if(filteredData == null)
-    document.getElementById(`${id}-pagination`).innerHTML = `
+    if (totalPages == 0 || totalPages == 1) return
+
+    if (filteredData == null)
+        document.getElementById(`${id}-pagination`).innerHTML = `
         <button onClick="changePage('${id}', 1, '${totalPages}')" class="badge badge-sm bg-gradient-info" ${currentPage === 1 ? 'disabled' : ''}>اولین صفحه</button>
         <button onClick="changePage('${id}', ${currentPage} - 1, '${totalPages}')" class="badge badge-sm bg-gradient-info" ${currentPage === 1 ? 'disabled' : ''}>قبلی</button>
         <span>صفحه ${currentPage} از ${totalPages}</span>
@@ -227,21 +236,21 @@ async function createTable(title, api, id) {
             const persianArrey = translateFields(fieldsArray);
             createTrThead(persianArrey, id);
 
-                let bool = false;
-                paginator.forEach(page => {
-                    if (page.name == id) {
-                        pagination(id, page.currentPage, page.total);
-                        renderTable(getData, id, api, page.currentPage);
-                        bool = true;
-                    }
-                });
-
-                if (!bool) {
-                    paginator.push({ name: id, currentPage: 1, total: Math.ceil(getData.length / paginationNumber), data: getData, api });
-                    pagination(id, 1, Math.ceil(getData.length / paginationNumber));
-                    renderTable(getData, id, api, 1);
+            let bool = false;
+            paginator.forEach(page => {
+                if (page.name == id) {
+                    pagination(id, page.currentPage, page.total);
+                    renderTable(getData, id, api, page.currentPage);
+                    bool = true;
                 }
-           
+            });
+
+            if (!bool) {
+                paginator.push({ name: id, currentPage: 1, total: Math.ceil(getData.length / paginationNumber), data: getData, api });
+                pagination(id, 1, Math.ceil(getData.length / paginationNumber));
+                renderTable(getData, id, api, 1);
+            }
+
         } else {
             document.getElementById(`${id}-tbody`).innerHTML = `
                 <h5 class='text-black text-capitalize ps-1 m-2'>موردی پیدا نشد!</h5>
@@ -279,69 +288,41 @@ function searchTable(id) {
 }
 
 // ✅ اضافه کردن لیسنر برای جستجو
-    setTimeout(() => {
-        let listTable = ['table-routers', 'table-limitation', 'table-profile', 'table-client', 'table-block-client', 'table-session', 'table-active']
+setTimeout(() => {
+    let listTable = ['table-routers', 'table-limitation', 'table-profile', 'table-client', 'table-block-client', 'table-session', 'table-active']
 
 
 
-        document.getElementById('searchInpute').addEventListener('input', () => {
-            listTable.forEach(table => {
-                searchTable(table)
-            })
-        });
+    document.getElementById('searchInpute').addEventListener('input', () => {
+        listTable.forEach(table => {
+            searchTable(table)
+        })
+    });
 
 
 
-    }, 1000);
-
-// function createTrTbody(data, id, api) {
-//     const tr = document.getElementById(`${id}-tbody`);
-//     tr.innerHTML = ``;
-//     let tbody = '<tr>';
-
-//     data.forEach(item => {
-//         for (const key in item) {
-//             if (key == "id" || key == "updatedAt") continue;
-//             if (key == "createdAt") item[key] = convertToJalaliDate(item[key]);
-//             if (key == "started") item[key] = convertToJalaliDate(item[key]);
-//             if (key == "lastAccountingPacket") item[key] = convertToJalaliDate(item[key]);
-
-//             tbody += `
-//                 <td class="align-middle text-center text-sm">
-//                     <h6 class="text-xs font-weight-bold mb-0">${item[key]}</h6>
-//                 </td>
-//             `;
-//         }
-
-//         if (id == "table-block-client") {
-//             tbody += `<td class="align-middle text-center text-sm">
-//                 <button type="button" onClick="returnModal(${item["id"]}, '${item["clientName"]}', '${api}')" class="badge badge-sm bg-gradient-secondary">بازگردانی</button>
-//             </td></tr>`;
-//         } else if (id == "table-active") {
-//             tbody += `<td class="align-middle text-center text-sm">
-//                 <button type="button" onClick="removeActivate('${item["userAddress"]}', '${item["acctSessionId"]}', '${item["callingStationId"]}')" class="badge badge-sm bg-gradient-danger">قطع ارتباط</button>
-//             </td></tr>`;
-//         } else if (id == "table-session") {
-//             tbody += `<td class="align-middle text-center text-sm">
-//                 <button type="button" onClick="addBlockList('${item["userAddress"]}', '${item["clientFullName"]}', '${item["callingStationId"]}')" class="badge badge-sm bg-gradient-danger">مسدود کردن کاربر</button>
-//             </td></tr>`;
-//         } else {
-//             tbody += `
-//                 <td class="align-middle text-center text-sm">
-//                     <button type="button" onClick="editModal(${item["id"]}, '${item["name"]}', '${api}')" class="badge badge-sm bg-gradient-warning">ویرایش</button>
-//                 </td>
-//                 <td class="align-middle text-center text-sm">
-//                     <button type="button" onClick="deleteModal(${item["id"]}, '${item["name"]}', '${api}')" class="badge badge-sm bg-gradient-danger">حذف</button>
-//                 </td></tr>
-//             `;
-//         }
-//     });
-
-//     tr.innerHTML = tbody;
-// }
+}, 1000);
 
 
 
+
+function weekDaysTranslate(str) {
+    const daysMap = {
+        "saturday": "شنبه",
+        "sunday": "یکشنبه",
+        "monday": "دوشنبه",
+        "tuesday": "سه‌شنبه",
+        "wednesday": "چهارشنبه",
+        "thursday": "پنج‌شنبه",
+        "friday": "جمعه"
+    };
+
+    const daysArray = str.split(",");
+    // جدا کردن بر اساس کاما
+    const translatedDays = daysArray.map(day => daysMap[day] || day); // ترجمه روزها
+
+    return translatedDays.join("، "); // تبدیل به رشته فارسی با جداکننده مناسب
+}
 
 
 
@@ -358,12 +339,34 @@ function createTrTbody(data, id, api) {
             if (key == "lastAccountingPacket") {
                 item[key] = convertToJalaliDate(item[key])
             }
+            if (key == "weekDays") {
+                item[key] = weekDaysTranslate(item[key])
+            }
+            if (key == "weekDays") {
+                item[key] = weekDaysTranslate(item[key])
+            }
 
-            tbody += `
-                <td class="align-middle text-center text-sm">
-                 <h6 class="text-xs font-weight-bold mb-0">${item[key]}</h6>
-                </td>
-            `
+            if (key != "star") {
+                tbody += `
+                    <td class="align-middle text-center text-sm">
+                     <h6 class="text-xs font-weight-bold mb-0">${item[key]}</h6>
+                    </td>
+                `
+            } else {
+                if (item[key]) {
+                    tbody += `
+                    <td class="align-middle text-center text-sm">
+                        <button type="button" onClick="star(${item["id"]} , true  ,'${item["name"]}')" class="badge badge-sm bg-gradient-info disable" style="border:none">֍</button>
+                    </td>
+                    `
+                } else {
+                    tbody += `
+                    <td class="align-middle text-center text-sm">
+                        <button type="button" onClick="star(${item["id"]} , false , '${item["name"]}')" class="badge badge-sm bg-gradient-secondary " style="border:none">ستاره دار کردن</button>
+                    </td>
+                    `
+                }
+            }
         }
         if (id == "table-block-client") {
             tbody += `
@@ -403,7 +406,85 @@ function createTrTbody(data, id, api) {
     tr.innerHTML = tbody
 }
 
+function star(id, status, username) {
+    console.log(id, status);
+    let messages;
+    if (status)
+        messages = `ایا می خواهید ستاره ی ${username} را بگیرید؟`
+    else
+        messages = `ایا می خواهید ستاره به ${username} بدهید؟`
 
+
+    const modal = document.createElement("div");
+    modal.id = "modal-overlay";
+    modal.style = `
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0, 0, 0, 0.5); display: flex;
+        align-items: center; justify-content: center; z-index: 10000;
+    `;
+
+    modal.innerHTML = `
+        <div id="modal-overlay" style="
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); display: flex;
+            align-items: center; justify-content: center; z-index: 1000;">
+
+            <div style="
+                background: white; padding: 20px; border-radius: 10px;
+                width: 300px; text-align: center; box-shadow: 0px 4px 10px rgba(0,0,0,0.2);">
+
+                <h4 style="margin-bottom: 10px;font-family=peyda">عملیات ستاره </h4>
+                <p>${messages}</p>
+                
+                <div i style="margin-top: 20px; display: flex; justify-content: space-between;">
+                    <button id="confirm-delete" style="
+                        background: ${!status ? '#1A73E8' : "#495361"}; color: white; border: none; padding: 10px;
+                        width: 45%; border-radius: 5px; cursor: pointer;">${status?'گرفتن':"دادن"} ستاره</button>
+                    
+                    <button id="cancel-delete" style="
+                        background: gray; color: white; border: none; padding: 10px;
+                        width: 45%; border-radius: 5px; cursor: pointer;">لغو</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    // دکمه‌های تأیید و لغو
+    document.getElementById("confirm-delete").addEventListener("click", async () => {
+        modal.remove(); // حذف مودال بعد از تأیید
+
+        try {
+            const response = await apiRequest(`/client-stars/${id}`);
+            if (response) {
+                Swal.fire({
+                    title: "عملیات موفق!",
+                    text: `عملیات با موفقیت انجام شد"${username}""`,
+                    icon: "success",
+                    confirmButtonText: "متوجه شدم",
+                    confirmButtonColor: '#43A047',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showClass: { popup: "animate__animated animate__fadeInDown" },
+                    hideClass: { popup: "animate__animated animate__fadeOutUp" }
+                });
+                createTable("جدول پروفایل ها", "client", "table-client")
+            }
+        } catch (error) {
+            Swal.fire({
+                title: "خطا!",
+                text: "مشکلی رخ داد. لطفاً دوباره امتحان کنید.",
+                icon: "error",
+                confirmButtonText: "متوجه شدم",
+                confirmButtonColor: '#D32F2F'
+            });
+        }
+    });
+
+    document.getElementById("cancel-delete").addEventListener("click", () => {
+        modal.remove(); // حذف مودال در صورت لغو
+    });
+}
 
 function createTrThead(fieldsArray, id) {
     const tr = document.getElementById(`${id}-tr`)
@@ -523,6 +604,9 @@ function translator(data) {
     switch (data) {
         case "name":
             returnedData = "نام"
+            break;
+        case "star":
+            returnedData = "وضعیت ستاره"
             break;
 
         case "username":
@@ -674,6 +758,12 @@ function translator(data) {
         case "totalClients":
             returnedData = "تعداد کاربران"
             break;
+        case "user":
+            returnedData = "نام کاربری"
+            break;
+        case "nasIpAddress":
+            returnedData = "ای پی دستگاه"
+            break;
         default:
             break;
     }
@@ -714,9 +804,8 @@ function deleteModal(id, name, api) {
     document.getElementById("confirm-delete").addEventListener("click", function () {
         deleteRouter(id, api);
         // تابع حذف را اجرا می‌کند
-        setTimeout(() => {
-            createTable(createdDataTitle, api, `table-${api}`)
-        }, 4000);
+
+
         closeModal();
     });
 
@@ -752,6 +841,13 @@ async function deleteRouter(id, api) {
                 popup: "animate__animated animate__fadeOutUp"
             }
         });
+        createTable(createdDataTitle, api, `table-${api}`)
+        createConnectionRuter()
+        createInputLimitationForm()
+        createInputProfileForm()
+        createInputClientForm()
+        createBlockClient()
+        createTable("جدول پروفایل ها", "block-client", "table-block-client")    
     } catch (error) {
         console.error("خطا در حذف :", error);
 
@@ -828,6 +924,14 @@ async function editModal(id, name, api) {
                         <option value="on_login" ${item[key] === "از موقع ورود" ? "selected" : ""}>از موقع ورود</option>
                     </select>
                 `;
+            } else if (key === "star" && api === "client") {
+                // formFields += `
+                //     <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">${translator(key)}</label>
+                //     <select name="startDate" id="edit-startDate" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                //         <option value="first_use" ${item[key] === "از اولین بار" ? "selected" : ""}>از اولین بار</option>
+                //         <option value="on_login" ${item[key] === "از موقع ورود" ? "selected" : ""}>از موقع ورود</option>
+                //     </select>
+                // `;
             } else if (key === "profileName" && relatedData.profile) {
                 formFields += `
                     <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">${translator(key)}</label>
@@ -905,6 +1009,13 @@ function editModalFetch(data, id, api) {
             popup: "animate__animated animate__fadeOutUp"
         }
     });
+    createTable(createdDataTitle, api, `table-${api}`)
+    createConnectionRuter()
+    createInputLimitationForm()
+    createInputProfileForm()
+    createInputClientForm()
+    createBlockClient()
+    createTable("جدول پروفایل ها", "block-client", "table-block-client")
     document.getElementById("edit-form").reset();
     closeModal()
 }
@@ -974,7 +1085,7 @@ function addBlockList(mac) {
                     showClass: { popup: "animate__animated animate__fadeInDown" },
                     hideClass: { popup: "animate__animated animate__fadeOutUp" }
                 });
-                createTable("جدول پروفایل ها", "block-mac", "table-blocked")    
+                createTable("جدول پروفایل ها", "block-mac", "table-blocked")
             }
         } catch (error) {
             Swal.fire({
@@ -1098,7 +1209,7 @@ function backMac(mac) {
                     showClass: { popup: "animate__animated animate__fadeInDown" },
                     hideClass: { popup: "animate__animated animate__fadeOutUp" }
                 });
-                createTable("جدول پروفایل ها", "block-mac", "table-blocked")    
+                createTable("جدول پروفایل ها", "block-mac", "table-blocked")
             }
         } catch (error) {
             Swal.fire({

@@ -138,45 +138,40 @@
           <div class="row mt-2" id="result-dashboard-router"
             style="display: none;">
             <div class="col-lg-6 col-md-6 mt-4 mb-4">
-              <div class="card">
+              <div class="card h-100">
                 <div class="card-body">
                   <h6 class="mb-0 ">سخت افزار</h6>
                   <p class="text-sm "> مقدار استفاده از منابع</p>
                   <div class="pe-2">
                     <div class="chart">
                       <canvas id="chart-bars" class="chart-canvas"
-                        height="170"></canvas>
+                        height="300" style="height:max-content"></canvas>
                     </div>
                   </div>
-                  <hr class="dark horizontal">
                   <div class="d-flex ">
-                    <i
-                      class="material-symbols-rounded text-sm my-auto ms-1">schedule</i>
-                    <p class="mb-0 text-sm">در وضعیت خطری با ما ارتباط
-                      بگیرید</p>
+                    
                   </div>
                 </div>
               </div>
             </div>
             <div class="col-lg-6 col-md-6 mt-4 mb-4">
-              <div class="card">
+              <div class="card h-100">
                 <div class="card-body">
-                  <h6 class="mb-0 ">پهنای باند</h6>
+                  <h6 class="mb-0 ">مصرف اینترنت</h6>
                   <p class="text-sm "><span
-                      class="font-weight-bolder text-success"></span>پهنای باند
-                    مصرفی و انفجازی</p>
+                      class="font-weight-bolder text-success"></span>میزان دانلود و اپلود</p>
                   <div class="pe-2">
                     <div class="chart">
-                      <canvas id="chart-line" class="chart-canvas"
-                        height="170"></canvas>
+                        <canvas id="usage-chart" class="chart-canvas" height="200"></canvas>
+                        <div style="text-align: center; margin-top: 10px;">
+                            <label><input type="checkbox" onchange="updateChart()" value="totalTraffic" checked> کل مصرف</label>
+                            <label><input type="checkbox" onchange="updateChart()" value="totalDownload" checked> دانلود</label>
+                            <label><input type="checkbox" onchange="updateChart()" value="totalUpload" checked> آپلود</label>
+                        </div>
                     </div>
                   </div>
-                  <hr class="dark horizontal">
                   <div class="d-flex ">
-                    <i
-                      class="material-symbols-rounded text-sm my-auto ms-1">schedule</i>
-                    <p class="mb-0 text-sm">در وضعیت خطری با ما ارتباط
-                      بگیرید</p>
+                    
                   </div>
                 </div>
               </div>
@@ -814,9 +809,6 @@
                         });
 
                         
-                        document.getElementById(`dailyData`).innerHTML = `
-                        
-                        `
 
                     }
                 }, 1000);
@@ -914,3 +906,76 @@
 
       }
     </script>
+
+
+
+<script>
+
+  
+
+    const chartData = [
+        { date: "1403-12-11", weekday: "شنبه", totalDownload: 12.6, totalUpload: 61.1, totalTraffic: 73.7 },
+        { date: "1403-12-12", weekday: "یک‌شنبه", totalDownload: 1960.2, totalUpload: 1776.7, totalTraffic: 3736.9 },
+        { date: "1403-12-13", weekday: "دوشنبه", totalDownload: 1878.5, totalUpload: 272.8, totalTraffic: 2151.3 }
+    ];
+    let chart;
+  
+    function createChart() {
+        const ctx = document.getElementById('usage-chart').getContext('2d');
+        const labels = chartData.map(item => item.weekday);
+        
+        const datasets = [];
+        document.querySelectorAll('input[type=checkbox]:checked').forEach(checkbox => {
+            const key = checkbox.value;
+            const colors = {
+                totalTraffic: "#43A047",
+                totalDownload: "#1E88E5",
+                totalUpload: "#E53935"
+            };
+            datasets.push({
+                label: checkbox.nextSibling.textContent,
+                data: chartData.map(item => item[key]),
+                borderColor: colors[key],
+                backgroundColor: colors[key] + "33",
+                borderWidth: 2,
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: colors[key]
+            });
+        });
+        
+        const config = {
+            type: 'line',
+            data: { labels, datasets },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: true, text: 'مصرف اینترنت بر اساس روزهای هفته' }
+                }
+            }
+        };
+        
+        if (chart) chart.destroy();
+        chart = new Chart(ctx, config);
+    }
+
+    function updateChart() { createChart(); }
+    createChart();
+</script>
+
+<style>
+    .chart-btn {
+        background-color: #43A047;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        margin: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    .chart-btn:hover {
+        background-color: #388E3C;
+    }
+</style>

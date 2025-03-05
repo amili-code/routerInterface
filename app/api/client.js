@@ -15,8 +15,8 @@ function parseSessionData(sessionResponse) {
     };
 
     // 🔥 بهبود روش جدا کردن سشن‌ها
-    const sessionBlocks = sessionResponse.split(/\n\s*\d+\s+A?\s+user=/g).filter(block => block.trim());
-
+    const sessionBlocks = sessionResponse.split(/\n\s*\d+\s+A?\s+user=/g)
+        .filter(block => block.trim() && /acct-session-id=/.test(block));
     const sessions = [];
 
     for (const block of sessionBlocks) {
@@ -26,7 +26,7 @@ function parseSessionData(sessionResponse) {
         const nasIpAddress = extractValue(block, /nas-ip-address=(\S+)/);
         const callingStationId = extractValue(block, /calling-station-id="([\w:]+)"/);
         const userAddress = extractValue(block, /user-address=(\S+)/);
-        const status = extractValue(block, /status=([\w,]+)/);
+        const status = extractValue(block, /status=([\w,-]+)/);
         const started = extractValue(block, /started=([\d-]+\s+[\d:]+)/);
         const ended = extractValue(block, /ended=([\d-]+\s+[\d:]+)/);
         const terminateCause = extractValue(block, /terminate-cause=(\S+)/);
@@ -69,13 +69,13 @@ function parseActiveSessions(activeResponse) {
 
     for (const block of sessionBlocks) {
         const userName = extractValue(block, /user=(\w+)/);
-        const acctSessionId = extractValue(block, /acct-session-id="(\d+)"/);
+        const acctSessionId = extractValue(block, /acct-session-id="?(\d+)"?/);
         const nasPortType = extractValue(block, /nas-port-type=(\S+)/);
         const nasPortId = extractValue(block, /nas-port-id="(\S+)"/);
         const nasIpAddress = extractValue(block, /nas-ip-address=([\d.]+)/);
         const callingStationId = extractValue(block, /calling-station-id="([\w:]+)"/);
         const userAddress = extractValue(block, /user-address=([\d.]+)/);
-        const status = extractValue(block, /status=([\w,]+)/);
+        const status = extractValue(block, /status=([\w,-]+)/);
         const started = extractValue(block, /started=([\d-]+\s+[\d:]+)/);
         const uptime = extractValue(block, /uptime=([\w\d]+)/);
         const download = extractValue(block, /download=([\w\d.]+)/);
@@ -102,7 +102,54 @@ function parseActiveSessions(activeResponse) {
     return activeSessions;
 }
 
+const parseSessionDatae = (rawData) => {
+    const sessions = [];
+    const lines = rawData.split('\n');
 
+    let session = {};
+    lines.forEach((line) => {
+        line = line.trim();
+        if (!line) return; // اگر خط خالی است، رد کن
+
+        const userMatch = line.match(/^(\d+\s+A?\s*)?user=(\S+)/);
+        if (userMatch) {
+            if (session.user) {
+                sessions.push(session); // سشن قبلی رو ذخیره کن
+            }
+            session = { user: userMatch[2] };
+        }
+
+        const fieldMapping = {
+            acctSessionId: /acct-session-id="([^"]+)"/,
+            nasPortType: /nas-port-type=(\S+)/,
+            nasPortId: /nas-port-id="([^"]+)"/,
+            nasIpAddress: /nas-ip-address=([\d.]+)/,
+            callingStationId: /calling-station-id="([^"]+)"/,
+            userAddress: /user-address=([\d.]+)/,
+            status: /status=([\w,]+)/,
+            started: /started=([\d-]+\s+[\d:]+)/,
+            ended: /ended=([\d-]+\s+[\d:]+)/,
+            terminateCause: /terminate-cause=([\w-]+)/,
+            uptime: /uptime=([\w\d]+)/,
+            download: /download=([\w\d.]+[KM]?i?B?)/,
+            upload: /upload=([\w\d.]+[KM]?i?B?)/,
+            lastAccountingPacket: /last-accounting-packet=([\d-]+\s+[\d:]+)/,
+        };
+
+        Object.keys(fieldMapping).forEach((key) => {
+            const match = line.match(fieldMapping[key]);
+            if (match) {
+                session[key] = match[1];
+            }
+        });
+    });
+
+    if (session.user) {
+        sessions.push(session); // آخرین سشن رو هم ذخیره کن
+    }
+
+    return sessions;
+};
 
 class ClientController {
     // دریافت لیست همه کاربران
@@ -119,11 +166,12 @@ class ClientController {
             });
 
             const formattedUsers = users.map(user => {
-                const { Profile, ...rest } = user.toJSON();
+                const { Profile, star, ...rest } = user.toJSON(); // جدا کردن star
+
                 return {
                     ...rest,
                     profileName: Profile ? Profile.name : null,
-                    profilePrice: Profile ? Profile.price : null,
+                    star // اضافه کردن star در انتها
                 };
             });
 
@@ -178,6 +226,7 @@ class ClientController {
         try {
             const sessions = await Session.findAll({
                 attributes: [
+                    'userName',
                     'callingStationId',
                     'userAddress',
                     'started',
@@ -186,37 +235,38 @@ class ClientController {
                     'upload',
                     'lastAccountingPacket'
                 ],
-                include: [
-                    {
-                        model: User,
-                        attributes: [
-                            ['fullname', 'clientFullName'],
-                            ['roomNumber', 'clientRoomNumber']
-                        ]
-                    }
-                ],
                 order: [['createdAt', 'DESC']],
                 raw: true
             });
 
-            // تغییر کلیدهای خروجی برای حذف "Client."
-            const formattedSessions = sessions.map(session => ({
-                ...session,
-                clientFullName: session['Client.clientFullName']
-            }));
-
-            // حذف فیلدهای اضافی
-            formattedSessions.forEach(session => {
-                delete session['Client.clientFullName'];
-                delete session['Client.clientRoomNumber'];
-            });
-
-            res.status(200).json(formattedSessions);
+            res.status(200).json(sessions);
         } catch (error) {
             console.error('Error fetching sessions:', error);
             res.status(500).json({ message: 'Error fetching sessions' });
         }
     }
+
+    async starClient(req, res) {
+        try {
+            const id = req.params.id;
+            const user = await User.findByPk(id);
+
+            if (!user) {
+                return res.status(404).json({ error: "کاربر پیدا نشد" });
+            }
+
+            // تغییر مقدار `star` به مقدار مخالف آن
+            const newStarValue = !user.star;
+
+            // آپدیت مقدار در دیتابیس
+            await user.update({ star: newStarValue });
+
+            res.status(200).json({ message: "وضعیت ستاره تغییر کرد", star: newStarValue });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
 
     async macSession(req, res) {
         try {
@@ -229,6 +279,7 @@ class ClientController {
 
             const sessions = await Session.findAll({
                 attributes: [
+                    'userName',
                     'callingStationId',
                     'userAddress',
                     'acctSessionId',
@@ -238,34 +289,16 @@ class ClientController {
                     'upload',
                     'lastAccountingPacket'
                 ],
-                include: [
-                    {
-                        model: User,
-                        attributes: [
-                            ['fullname', 'clientFullName'],
-                            ['roomNumber', 'clientRoomNumber']
-                        ]
-                    }
-                ],
                 where: whereClause, // اعمال فیلتر داینامیک
                 order: [['createdAt', 'DESC']],
                 raw: true
             });
 
-            // تغییر کلیدهای خروجی برای حذف "User."
-            const formattedSessions = sessions.map(session => ({
-                ...session,
-                clientFullName: session['User.clientFullName'],
-                clientRoomNumber: session['User.clientRoomNumber']
-            }));
 
-            // حذف فیلدهای اضافی
-            formattedSessions.forEach(session => {
-                delete session['User.clientFullName'];
-                delete session['User.clientRoomNumber'];
-            });
 
-            res.status(200).json(formattedSessions);
+
+
+            res.status(200).json(sessions);
         } catch (error) {
             console.error('Error fetching filtered sessions:', error);
             res.status(500).json({ message: 'Error fetching filtered sessions' });
@@ -273,9 +306,12 @@ class ClientController {
     }
 
     async terminated(req, res) {
+        // try {
         const sessionId = req.params.id
+        console.log(sessionId);
         const session = await Session.findOne({ where: { acctSessionId: sessionId } })
-        const user = await User.findByPk(session.userId);
+        if (!session) res.status(404).json('session not founded')
+        const user = await User.findOne({ where: { name: session.userName } });
         if (!user) res.status(404).json('user not founded')
         const profile = await Profile.findByPk(user.profileId);
         if (!profile) res.status(404).json('Profile not founded')
@@ -286,6 +322,9 @@ class ClientController {
         const responsee = await executeCommand(router, `user-manager/session/close-session [find where acct-session-id=${sessionId}]`)
         // const response = await executeCommand(router, `user-manager/session/remove [find where acct-session-id=${sessionId}]`)
         res.status(200).json(responsee)
+        // } catch (error) {
+        //     res.status(500).json(error)
+        // }
     }
 
     async mostUsed(req, res) {
@@ -368,7 +407,7 @@ class ClientController {
             const oui = macAddress.substring(0, 8).toUpperCase(); // گرفتن ۳ بخش اول مک
             return OUI_DATABASE[oui] || "Unknown";
         };
-     
+
         try {
             const { startDate, endDate } = req.query;
 
@@ -378,13 +417,7 @@ class ClientController {
 
             // دریافت تمام سشن‌های داخل بازه زمانی
             const sessions = await Session.findAll({
-                attributes: ['callingStationId'],
-                include: [
-                    {
-                        model: User,
-                        attributes: ['fullName']
-                    }
-                ],
+                attributes: ['callingStationId', 'userName'],
                 where: {
                     started: { [Op.gte]: new Date(startDate) },
                     ended: { [Op.lte]: new Date(endDate) }
@@ -395,9 +428,11 @@ class ClientController {
 
             // دسته‌بندی داده‌ها بر اساس MAC Address
             const macClients = {};
-            for (const { callingStationId, ['Client.fullName']: clientFullName } of sessions) {
-                if (!macClients[callingStationId]) macClients[callingStationId] = { clients: new Set(), vendor: null };
-                macClients[callingStationId].clients.add(clientFullName);
+            for (const { callingStationId, userName } of sessions) {
+                if (!macClients[callingStationId]) {
+                    macClients[callingStationId] = { clients: new Set(), vendor: null };
+                }
+                macClients[callingStationId].clients.add(userName);
             }
 
             // دریافت نام شرکت برای هر MAC Address
@@ -426,100 +461,88 @@ class ClientController {
 
     async activeUser(req, res) {
         try {
-            const users = await User.findAll();
-            const activeUsers = [];
+            const routers = await Router.findAll();
+            let activeUsers = [];
 
-            for (const user of users) {
-                // پیدا کردن روتر مربوط به این یوزر
-                const profile = await Profile.findByPk(user.profileId);
-                if (!profile) continue;
+            for (const router of routers) {
+                const check = await executeCommand(router, `ip address/print`);
+                if (!check) continue;
 
-                const limitation = await Limitation.findByPk(profile.limitationId);
-                if (!limitation) continue;
+                const response = await executeCommand(router, `user-manager/session/print where active=yes`);
+                const sessions = parseSessionDatae(response);
 
-                const router = await Router.findByPk(limitation.routerId);
-                if (!router) continue;
+                console.log(`تعداد کاربران فعال دریافت‌شده از روتر ${router.name}: ${sessions.length}`);
 
-                // **📌 دریافت سشن‌های کلی از میکروتیک**
-                const sessionCommand = `user-manager/session/print where user=${user.name}`;
-                const sessionResponse = await executeCommand(router, sessionCommand);
+                const filteredSessions = sessions.map(session => ({
+                    userName: session.user, // استفاده از userName به جای userId
+                    acctSessionId: session.acctSessionId,
+                    callingStationId: session.callingStationId,
+                    nasIpAddress: session.nasIpAddress,
+                    uptime: session.uptime,
+                    download: session.download,
+                    upload: session.upload,
+                }));
 
-                const parsedSessions = parseSessionData(sessionResponse);
-
-                for (const session of parsedSessions) {
-                    if (!session.acctSessionId) continue
-
-                    const { acctSessionId, started, ended, lastAccountingPacket, ...otherData } = session;
-
-                    const existingSession = await Session.findOne({ where: { acctSessionId } });
-
-                    if (!existingSession) {
-                        await Session.create({
-                            userId: user.id,
-                            acctSessionId,
-                            ...otherData,
-                            started: started ? new Date(started) : null,
-                            ended: ended ? new Date(ended) : null,
-                            lastAccountingPacket: lastAccountingPacket ? new Date(lastAccountingPacket) : null,
-                        });
-                    } else {
-                        const updatedFields = {};
-
-                        for (const key in otherData) {
-                            if (existingSession[key] !== otherData[key]) {
-                                updatedFields[key] = otherData[key];
-                            }
-                        }
-
-                        if (started && (!existingSession.started || existingSession.started.toISOString() !== new Date(started).toISOString())) {
-                            updatedFields.started = new Date(started);
-                        }
-                        if (ended && (!existingSession.ended || existingSession.ended.toISOString() !== new Date(ended).toISOString())) {
-                            updatedFields.ended = new Date(ended);
-                        }
-                        if (lastAccountingPacket && (!existingSession.lastAccountingPacket || existingSession.lastAccountingPacket.toISOString() !== new Date(lastAccountingPacket).toISOString())) {
-                            updatedFields.lastAccountingPacket = new Date(lastAccountingPacket);
-                        }
-
-                        if (Object.keys(updatedFields).length > 0) {
-                            await existingSession.update(updatedFields);
-                        }
-                    }
-                }
-
-
-
-                const activeCommand = `user-manager/session/print where active=yes user=${user.name}`;
-                const activeResponse = await executeCommand(router, activeCommand);
-                const parsedActiveSessions = parseActiveSessions(activeResponse);
-
-                // 🟢 افزودن تمام سشن‌های فعال این کاربر به آرایه `activeUsers`
-                for (const session of parsedActiveSessions) {
-                    if (!session.acctSessionId) continue
-                    activeUsers.push({
-                        userName: user.name,
-                        roomNumber: user.roomNumber,
-                        acctSessionId: session.acctSessionId,
-                        callingStationId: session.callingStationId,
-                        userAddress: session.userAddress,
-                        started: session.started,
-                        uptime: session.uptime,
-                        download: session.download,
-                        upload: session.upload,
-                    });
-                }
-
-
+                activeUsers = [...activeUsers, ...filteredSessions];
             }
 
-            res.status(200).json(activeUsers);
+            res.json(activeUsers);
         } catch (error) {
-            console.error("Error fetching active users:", error);
-            res.status(500).json({ error: error.message });
+            console.error("خطا در دریافت کاربران فعال:", error);
+            res.status(500).json({ message: "خطا در پردازش اطلاعات" });
         }
     }
 
+    async updataSession(req, res) {
+        try {
+            const routers = await Router.findAll();
 
+            for (const router of routers) {
+                const check = await executeCommand(router, `ip address/print`);
+                if (!check) continue;
+
+                const response = await executeCommand(router, `user-manager/session/print`);
+                const sessions = parseSessionDatae(response);
+                console.log(`تعداد سشن‌های دریافت‌شده: ${sessions.length}`);
+
+                const newSessions = [];
+
+                for (const session of sessions) {
+                    if (!session.user) continue;
+                    if (!session.acctSessionId) {
+                        console.warn(`سشن بدون شناسه: ${session}`);
+                        continue;
+                    }
+
+                    const existingSession = await Session.findOne({
+                        where: { acctSessionId: session.acctSessionId, userName: session.user },
+                    });
+
+                    if (existingSession) {
+                        await existingSession.update({
+                            ...session,
+                            userName: session.user, // ذخیره نام کاربر به جای userId
+                        });
+                    } else {
+                        newSessions.push({
+                            ...session,
+                            userName: session.user,
+                        });
+                    }
+                }
+
+                if (newSessions.length > 0) {
+                    await Session.bulkCreate(newSessions);
+                    console.log(`${newSessions.length} سشن جدید اضافه شد.`);
+                }
+            }
+
+            res.json({ message: "بروزرسانی انجام شد" });
+        } catch (error) {
+            console.error("خطا در پردازش سشن‌ها:", error);
+            res.status(500).json({ message: "خطا در پردازش اطلاعات" });
+        }
+    }
     // بروزرسانی اطلاعات کاربر
     async update(req, res) {
         try {
@@ -542,13 +565,19 @@ class ClientController {
                 const addRelatedCommandResult = await executeCommand(router, addRelatedCommand)
             }
 
+            if (user.name != name) {
+                const sessions = await Session.findAll({ where: { userName: user.name } })
+                for (const session of sessions) {
+                    const newUserName = name;
+                    await session.update({ userName: newUserName })
+                }
+            }
 
             // const command = `user-manager/user/remove [find name=${user.name}]`
             // const commandResult = await executeCommand(router, command)
 
             const addCommand = `user-manager/user/set [find name="${user.name}"] name=${name} password=${password} shared-users=${ClientCount}`
             const addCommandResult = await executeCommand(router, addCommand)
-
 
 
 

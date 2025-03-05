@@ -223,9 +223,8 @@
 
         // ارسال داده‌ها
         createclient(data);
-        setTimeout(() => {
-            createTable("جدول پروفایل ها" , "client" , "table-client")
-        }, 4000);
+        
+      
     });
 
      async function createclient(data) {
@@ -246,6 +245,8 @@
                 popup: "animate__animated animate__fadeOutUp"
             }
         });
+        createTable("جدول پروفایل ها" , "client" , "table-client")
+        createBlockClient()
         document.getElementById("clientForm").reset();
      } else{
          Swal.fire({
