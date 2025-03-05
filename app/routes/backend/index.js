@@ -13,6 +13,7 @@ const limitationController = require("app/api/limitation");
 const profileController = require("app/api/profile");
 const clientController = require("app/api/client");
 const blockedClientController = require("app/api/blockedClient");
+const reqController = require("app/api/req");
 
 
 
@@ -21,6 +22,8 @@ const blockedClientController = require("app/api/blockedClient");
 // router.post('/register', userController.register.bind(userController))
 // router.post('/login', userController.login.bind(userController))
 
+router.get('/req', reqController.getAll.bind(reqController))
+router.post('/req', reqController.create.bind(reqController))
 
 // router.use(activityLogger);
 router.get('/routers', routerController.getAll.bind(routerController))

@@ -30,7 +30,7 @@ function setConfig() {
 
     
     if (process.env.DataBaseCreate == "true") {
-        // syncDatabase()
+        // syncDatabase() 
         // seedEvents()
     }
 }
