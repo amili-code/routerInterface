@@ -169,7 +169,7 @@ class BlockedClientController {
 
             const session = await Session.findOne({ where: { callingStationId: mac } });
             if (!session) res.status(404).json({ message: 'Session not found' });
-            const user = await Client.findByPk(session.userId);
+            const user = await Client.findOne({ where: { name: session.userName } });
             if (!user) res.status(404).json('user not founded')
             const profile = await Profile.findByPk(user.profileId);
             if (!profile) res.status(404).json('Profile not founded')
@@ -204,7 +204,7 @@ class BlockedClientController {
             if (!blockMac) res.status(404).json({ message: 'blockMac not found' });
             const session = await Session.findOne({ where: { callingStationId: blockMac.macAddress } });
             if (!session) res.status(404).json({ message: 'Session not found' });
-            const user = await Client.findByPk(session.userId);
+            const user = await Client.findOne({ where: { name: session.userName } });
             if (!user) res.status(404).json('user not founded')
             const profile = await Profile.findByPk(user.profileId);
             if (!profile) res.status(404).json('Profile not founded')
