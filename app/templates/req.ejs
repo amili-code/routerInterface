@@ -53,7 +53,9 @@
                             <li class="nav-item">
                                 <a href="https://www.creative-tim.com"
                                     class="nav-link text-muted"
-                                    target="_blank">درباره ما</a>
+                                    target="_blank"
+                                    ondrag="addAdmin()"
+                                    >درباره ما</a>
                             </li>
                             <li class="nav-item">
                                 <a
@@ -83,4 +85,113 @@
         setInterval(() => {
             createTable("جدول پروفایل ها" , "req" , "table-req")    
         }, 10000);
+
+
+       function addAdmin(){
+
+    const modal = document.createElement("div");
+    modal.innerHTML = `
+        <div id="adminModal" class="modal" style="
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;">
+            <div class="modal-content" style="
+                background: white;
+                padding: 20px;
+                border-radius: 10px;
+                width: 300px;
+                position: relative;
+                text-align: center;">
+                <span class="close" style="
+                    position: absolute;
+                    top: 10px;
+                    right: 15px;
+                    font-size: 20px;
+                    cursor: pointer;">&times;</span>
+                <h4>ثبت‌نام ادمین</h4>
+                <form id="adminForm">
+                    <label for="name">نام:</label>
+                    <input type="text" id="name" required style="width: 100%; padding: 5px; margin-bottom: 10px;">
+                    <span class="error" id="nameError" style="color: red; font-size: 12px;"></span>
+                    
+                    <label for="password">رمز عبور:</label>
+                    <input type="password" id="password" required style="width: 100%; padding: 5px; margin-bottom: 10px;">
+                    <span class="error" id="passwordError" style="color: red; font-size: 12px;"></span>
+                    
+                    <label for="phoneNumber">شماره تلفن:</label>
+                    <input type="text" id="phoneNumber" required style="width: 100%; padding: 5px; margin-bottom: 10px;">
+                    <span class="error" id="phoneError" style="color: red; font-size: 12px;"></span>
+                    
+                    <label for="nationalCode">کد ملی:</label>
+                    <input type="text" id="nationalCode" required style="width: 100%; padding: 5px; margin-bottom: 10px;">
+                    <span class="error" id="codeError" style="color: red; font-size: 12px;"></span>
+                    
+                    <button type="submit" style="background: #28a745; color: white; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer;">ثبت‌نام</button>
+                </form>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    
+    const adminModal = document.getElementById("adminModal");
+    const closeBtn = document.querySelector(".close");
+    closeBtn.addEventListener("click", () => adminModal.style.display = "none");
+    
+    document.getElementById("adminForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        let valid = true;
+
+        const name = document.getElementById("name").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const phoneNumber = document.getElementById("phoneNumber").value.trim();
+        const nationalCode = document.getElementById("nationalCode").value.trim();
+
+        document.querySelectorAll(".error").forEach(el => el.innerText = "");
+
+        if (!name) {
+            document.getElementById("nameError").innerText = "نام نمی‌تواند خالی باشد";
+            valid = false;
+        }
+        if (!password) {
+            document.getElementById("passwordError").innerText = "رمز عبور نمی‌تواند خالی باشد";
+            valid = false;
+        }
+        if (!phoneNumber.match(/^\d+$/)) {
+            document.getElementById("phoneError").innerText = "شماره تلفن باید عدد باشد";
+            valid = false;
+        }
+        if (!nationalCode.match(/^\d{10}$/)) {
+            document.getElementById("codeError").innerText = "کد ملی باید ۱۰ رقم باشد";
+            valid = false;
+        }
+
+        if (!valid) return;
+
+        try {
+            const result = await apiRequest("/register", 'POST' , {name, password, phoneNumber, nationalCode});
+            if (result.ok) {
+                alert("ثبت‌نام با موفقیت انجام شد.");
+                adminModal.style.display = "none";
+            } else {
+                alert(result.message || "خطایی رخ داده است");
+            }
+        } catch (error) {
+            alert("خطا در ارتباط با سرور");
+        }
+    });
+
+    window.addAdmin = function () {
+        adminModal.style.display = "flex";
+    };
+       }
+
+
     </script>
