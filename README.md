@@ -32,35 +32,6 @@
 
 
 1️⃣ ابتدا **مخزن را کلون کنید**:
-```sh
- git clone https://github.com/your-repo/internet-user-manager.git
-```
-
-2️⃣ **وارد پوشه پروژه شوید**:
-```sh
-cd internet-user-manager
-```
-
-3️⃣ **وابستگی‌ها را نصب کنید**:
-```sh
-npm install
-```
-
-4️⃣ **فایل `.env` را تنظیم کنید** (مثال:)
-```env
-DB_HOST=localhost
-DB_USER=root
-DB_PASS=yourpassword
-DB_NAME=user_manager
-```
-
-5️⃣ **اجرای پروژه**:
-```sh
-npm start
-```
-
----
-
 ## 📸 تصاویر محیط برنامه | Screenshots
 
 🔹 **صفحه ورود کاربران**  
