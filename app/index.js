@@ -8,18 +8,31 @@ const session = require('express-session');
 const setupSocket = require("app/socket");
 const cookieParser = require("cookie-parser");
 const { syncDatabase } = require('./config/syncDatabase');
+const crypto = require('crypto');
 require('dotenv').config();
 
 const server = http.createServer(app);
+const secretKey = process.env.APP_SECRET_KEY;
+const storedHash = process.env.APP_SECRET_HASH;
+
+function hashString(input) {
+    return crypto.createHash(`${process.env.HASH}`).update(input).digest(`${process.env.DIGEST}`);
+}
+
 
 class Application {
     constructor() {
         try {
+            if (!secretKey || hashString(secretKey) !== storedHash) {
+                console.error("⛔ خطا: کلید امنیتی معتبر نیست!");
+                process.exit(1); // متوقف کردن برنامه
+            }
             this.setupGlobalErrorHandling();  // ✅ اضافه کردن هندلر خطاهای عمومی
             this.setupExpress();
             this.setConfig();
             this.serRouters();
             this.serSocket();
+        
         } catch (error) {
             console.error("خطای کلی در راه‌اندازی برنامه:", error);
         }
