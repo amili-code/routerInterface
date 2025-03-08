@@ -1,6 +1,5 @@
 # 🌐 مدیریت کاربران اینترنت | Internet User Manager
 
-![User Manager](https://via.placeholder.com/800x300.png?text=Internet+User+Manager)
 
 > **مدیریت کاربران اینترنت به روشی سریع، امن و آسان!** 🚀
 
