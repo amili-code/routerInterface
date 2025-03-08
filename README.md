@@ -29,7 +29,8 @@
 
 ## 🔧 نصب و راه‌اندازی | Installation & Setup
 
-پروژه اختصاصی هستش برای استفاده با ما ارتباط بگیرید
+پروژه اختصاصی هستش برای دسترسی بهش با ما ارتباط بگیرید 
+
 
 1️⃣ ابتدا **مخزن را کلون کنید**:
 ```sh
@@ -64,14 +65,12 @@ npm start
 ## 📸 تصاویر محیط برنامه | Screenshots
 
 🔹 **صفحه ورود کاربران**  
-![Login]([https://via.placeholder.com/600x300.png?text=Login+Page](https://github.com/amili-code/routerInterface/blob/main/public/assets/img/tout/1.png))
+![Login](https://github.com/amili-code/routerInterface/blob/main/public/assets/img/tout/1.png)
 
 🔹 **پنل مدیریت کاربران**  
-![Dashboard]([https://via.placeholder.com/600x300.png?text=User+Dashboard](https://github.com/amili-code/routerInterface/blob/main/public/assets/img/tout/2.png))
-![Dashboard]([https://via.placeholder.com/600x300.png?text=User+Dashboard](https://github.com/amili-code/routerInterface/blob/main/public/assets/img/tout/3.png))
-
-(در اینجا می‌توانید اسکرین‌شات‌های واقعی از نرم‌افزار خود قرار دهید.)
-![Dashboard]([https://via.placeholder.com/600x300.png?text=User+Dashboard](https://github.com/amili-code/routerInterface/blob/main/public/assets/img/tout/4.png))
+![Dashboard](https://github.com/amili-code/routerInterface/blob/main/public/assets/img/tout/2.png)
+![Dashboard](https://github.com/amili-code/routerInterface/blob/main/public/assets/img/tout/3.png)
+![Dashboard](https://github.com/amili-code/routerInterface/blob/main/public/assets/img/tout/4.png)
 
 ---
 
@@ -79,14 +78,12 @@ npm start
 - **Node.js** 🟢
 - **Express.js** 🚀
 - **MySQL** 🗄️
-- **Bootstrap / Tailwind CSS** 🎨
+- **Bootstrap / Scss** 🎨
 
 ---
 
 ## 📞 راه‌های ارتباطی | Contact
 📱 شماره تماس: **09155875937**  
-📧 ایمیل: **youremail@example.com**  
-🌐 وب‌سایت: [yourwebsite.com](https://yourwebsite.com)  
 
 💡 **اگر سؤالی دارید یا نیاز به پشتیبانی دارید، با ما تماس بگیرید!**
 
