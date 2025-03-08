@@ -214,7 +214,6 @@ class BlockedClientController {
             if (!router) res.status(404).json('Router not founded')
 
             const response = await executeCommand(router, `ip/ hotspot/ ip-binding/ remove [find mac-address=${req.params.mac}] `)
-            console.log(response);
             await blockMac.destroy();
 
 

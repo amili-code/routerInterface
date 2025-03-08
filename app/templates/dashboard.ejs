@@ -12,14 +12,14 @@
           </div>
           <div class="text-start pt-1">
             <p class="text-sm mb-0 text-capitalize">تعداد کاربران متصل</p>
-            <h4 class="mb-0">در حال بارگیری</h4>
+            <h4 class="mb-0" id="activeClientCount">در حال بارگیری</h4>
           </div>
         </div>
         <hr class="dark horizontal my-0">
         <div class="card-footer p-3">
-          <p class="mb-0 text-start"><span
-              class="text-success text-sm font-weight-bolder ms-1"></span>در حال
-            بارگیری</p>
+          <p class="mb-0 text-start text-center"><span
+              class="text-success text-sm font-weight-bolder ms-1"></span><a
+              href="#active">نمایش دقیق</a></p>
         </div>
       </div>
     </div>
@@ -32,14 +32,14 @@
           </div>
           <div class="text-start pt-1">
             <p class="text-sm mb-0 text-capitalize">تعداد روتر ها</p>
-            <h4 class="mb-0">در حال بارگیری</h4>
+            <h4 class="mb-0" id="routerCount">در حال بارگیری</h4>
           </div>
         </div>
         <hr class="dark horizontal my-0">
         <div class="card-footer p-3">
-          <p class="mb-0 text-start"><span
-              class="text-success text-sm font-weight-bolder ms-1"></span>در حال
-            بارگیری</p>
+          <p class="mb-0 text-start text-center"><span
+              class="text-success text-sm font-weight-bolder ms-1"></span><a
+              href="#routers">نمایش دقیق</a></p>
         </div>
       </div>
     </div>
@@ -52,17 +52,14 @@
           </div>
           <div class="text-start pt-1">
             <p class="text-sm mb-0 text-capitalize">تعداد محدودیت ها</p>
-            <h4 class="mb-0">
-              <span class="text-danger text-sm font-weight-bolder ms-1"></span>
-              در حال بارگیری
-            </h4>
+            <h4 class="mb-0" id="limitationCount">در حال بارگیری</h4>
           </div>
         </div>
         <hr class="dark horizontal my-0">
         <div class="card-footer p-3">
-          <p class="mb-0 text-start"><span
-              class="text-success text-sm font-weight-bolder ms-1"></span>در حال
-            بارگیری</p>
+          <p class="mb-0 text-start text-center"><span
+              class="text-success text-sm font-weight-bolder ms-1"></span><a
+              href="#limitation">نمایش دقیق</a></p>
         </div>
       </div>
     </div>
@@ -75,14 +72,14 @@
           </div>
           <div class="text-start pt-1">
             <p class="text-sm mb-0 text-capitalize">تعداد پروفایل ها</p>
-            <h4 class="mb-0">در حال بارگیری</h4>
+            <h4 class="mb-0" id="profileCount">در حال بارگیری</h4>
           </div>
         </div>
         <hr class="dark horizontal my-0">
         <div class="card-footer p-3">
-          <p class="mb-0 text-start"><span
-              class="text-success text-sm font-weight-bolder ms-1"></span>در حال
-            بارگیری</p>
+          <p class="mb-0 text-start text-center"><span
+              class="text-success text-sm font-weight-bolder ms-1"></span><a
+              href="#profile">نمایش دقیق</a></p>
         </div>
       </div>
     </div>
@@ -149,7 +146,7 @@
                     </div>
                   </div>
                   <div class="d-flex ">
-                    
+
                   </div>
                 </div>
               </div>
@@ -159,19 +156,24 @@
                 <div class="card-body">
                   <h6 class="mb-0 ">مصرف اینترنت</h6>
                   <p class="text-sm "><span
-                      class="font-weight-bolder text-success"></span>میزان دانلود و اپلود</p>
+                      class="font-weight-bolder text-success"></span>میزان
+                    دانلود و اپلود</p>
                   <div class="pe-2">
                     <div class="chart">
-                        <canvas id="usage-chart" class="chart-canvas" height="200"></canvas>
-                        <div style="text-align: center; margin-top: 10px;">
-                            <label><input type="checkbox" onchange="updateChart()" value="totalTraffic" checked> کل مصرف</label>
-                            <label><input type="checkbox" onchange="updateChart()" value="totalDownload" checked> دانلود</label>
-                            <label><input type="checkbox" onchange="updateChart()" value="totalUpload" checked> آپلود</label>
-                        </div>
+                      <canvas id="usage-chart" class="chart-canvas"
+                        height="200"></canvas>
+                      <div style="text-align: center; margin-top: 10px;">
+                        <label><input type="checkbox" onchange="updateChart()"
+                            value="totalTraffic" checked> کل مصرف</label>
+                        <label><input type="checkbox" onchange="updateChart()"
+                            value="totalDownload" checked> دانلود</label>
+                        <label><input type="checkbox" onchange="updateChart()"
+                            value="totalUpload" checked> آپلود</label>
+                      </div>
                     </div>
                   </div>
                   <div class="d-flex ">
-                    
+
                   </div>
                 </div>
               </div>
@@ -183,11 +185,12 @@
                   <div class="pe-2">
                     <div class="chart">
                       <img
+                        id="daily-data"
                         src="http://192.168.100.100/graphs/iface/ether1/daily.gif"
                         style="width: 103%;" alt>
                       <!-- <canvas id="chart-line-tasks" class="chart-canvas"
                         height="170"></canvas> -->
-                      <div id="daily-data"></div>
+                      <div></div>
                     </div>
                   </div>
                   <!-- <hr class="dark horizontal">
@@ -207,6 +210,7 @@
                       <!-- <canvas id="chart-line-tasks" class="chart-canvas"
                         height="170"></canvas> -->
                       <img
+                        id="weekly-data"
                         src="http://192.168.100.100/graphs/iface/ether1/weekly.gif"
                         style="width: 103%;" alt>
                     </div>
@@ -228,6 +232,7 @@
                       <!-- <canvas id="chart-line-tasks" class="chart-canvas"
                         height="170"></canvas> -->
                       <img
+                        id="monthly-data"
                         src="http://192.168.100.100/graphs/iface/ether1/monthly.gif"
                         style="width: 103%;" alt>
                     </div>
@@ -249,6 +254,7 @@
                       <!-- <canvas id="chart-line-tasks" class="chart-canvas"
                         height="170"></canvas> -->
                       <img
+                        id="yearly-data"
                         src="http://192.168.100.100/graphs/iface/ether1/yearly.gif"
                         style="width: 103%;" alt>
                     </div>
@@ -272,365 +278,26 @@
         <div class="card-header pb-0">
           <div class="row mb-3">
             <div class="col-6">
-              <h6>کاربران فعال</h6>
+              <h6>فعالیت های ادمین ها</h6>
               <p class="text-sm">
                 <i class="fa fa-check text-info" aria-hidden="true"></i>
-                <span class="font-weight-bold ms-1"></span>لیست کاربران فعال
+                <span class="font-weight-bold ms-1"></span>لیست فعالت ها
               </p>
-            </div>
-            <div class="col-6 my-auto text-start">
-              <div class="dropdown float-start ps-4">
-                <a class="cursor-pointer" id="dropdownTable"
-                  data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="fa fa-ellipsis-v text-secondary"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-n4"
-                  aria-labelledby="dropdownTable">
-                  <li><a class="dropdown-item border-radius-md"
-                      href="javascript:;">عمل</a></li>
-                  <li><a class="dropdown-item border-radius-md"
-                      href="javascript:;">عمل آخر</a></li>
-                  <li><a class="dropdown-item border-radius-md"
-                      href="javascript:;">شيء آخر هنا</a></li>
-                </ul>
-              </div>
             </div>
           </div>
         </div>
         <div class="card-body p-0 pb-2">
           <div class="table-responsive">
-            <table class="table align-items-center mb-0">
+            <table class="table align-items-center mb-0" id="table-admin">
               <thead>
-                <tr>
-                  <th
-                    class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">نام
-                    کاربر</th>
-                  <th
-                    class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">تعداد
-                    کاربران</th>
-                  <th
-                    class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">میزان
-                    استفاده</th>
-                  <th
-                    class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">شماره
-                    اتاق</th>
-                </tr>
+                <tr id="table-admin-tr"></tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <div class="d-flex px-2 py-1">
-                      <div>
-                        <img src="../assets/img/small-logos/logo-xd.svg"
-                          class="avatar avatar-sm ms-3">
-                      </div>
-                      <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm">Material XD الإصدار</h6>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="avatar-group mt-2">
-                      <a href="javascript:;"
-                        class="avatar avatar-xs rounded-circle"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        title="Ryan Tompson">
-                        <img alt="Image placeholder"
-                          src="../assets/img/team-1.jpg">
-                      </a>
-                      <a href="javascript:;"
-                        class="avatar avatar-xs rounded-circle"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        title="Romina Hadid">
-                        <img alt="Image placeholder"
-                          src="../assets/img/team-2.jpg">
-                      </a>
-                      <a href="javascript:;"
-                        class="avatar avatar-xs rounded-circle"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        title="Alexander Smith">
-                        <img alt="Image placeholder"
-                          src="../assets/img/team-3.jpg">
-                      </a>
-                      <a href="javascript:;"
-                        class="avatar avatar-xs rounded-circle"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        title="Jessica Doe">
-                        <img alt="Image placeholder"
-                          src="../assets/img/team-4.jpg">
-                      </a>
-                    </div>
-                  </td>
-                  <td class="align-middle text-center text-sm">
-                    <span class="text-xs font-weight-bold"> $14,000 </span>
-                  </td>
-                  <td class="align-middle">
-                    <div class="progress-wrapper w-75 mx-auto">
-                      <div class="progress-info">
-                        <div class="progress-percentage">
-                          <span class="text-xs font-weight-bold">60%</span>
-                        </div>
-                      </div>
-                      <div class="progress">
-                        <div class="progress-bar bg-gradient-info w-60"
-                          role="progressbar" aria-valuenow="60"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="d-flex px-2 py-1">
-                      <div>
-                        <img src="../assets/img/small-logos/logo-atlassian.svg"
-                          class="avatar avatar-sm ms-3">
-                      </div>
-                      <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm">أضف مسار التقدم إلى التطبيق
-                          الداخلي</h6>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="avatar-group mt-2">
-                      <a href="javascript:;"
-                        class="avatar avatar-xs rounded-circle"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        title="Romina Hadid">
-                        <img alt="Image placeholder"
-                          src="../assets/img/team-2.jpg">
-                      </a>
-                      <a href="javascript:;"
-                        class="avatar avatar-xs rounded-circle"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        title="Jessica Doe">
-                        <img alt="Image placeholder"
-                          src="../assets/img/team-4.jpg">
-                      </a>
-                    </div>
-                  </td>
-                  <td class="align-middle text-center text-sm">
-                    <span class="text-xs font-weight-bold"> $3,000 </span>
-                  </td>
-                  <td class="align-middle">
-                    <div class="progress-wrapper w-75 mx-auto">
-                      <div class="progress-info">
-                        <div class="progress-percentage">
-                          <span class="text-xs font-weight-bold">10%</span>
-                        </div>
-                      </div>
-                      <div class="progress">
-                        <div class="progress-bar bg-gradient-info w-10"
-                          role="progressbar" aria-valuenow="10"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="d-flex px-2 py-1">
-                      <div>
-                        <img src="../assets/img/small-logos/logo-slack.svg"
-                          class="avatar avatar-sm ms-3">
-                      </div>
-                      <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm">إصلاح أخطاء النظام الأساسي</h6>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="avatar-group mt-2">
-                      <a href="javascript:;"
-                        class="avatar avatar-xs rounded-circle"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        title="Romina Hadid">
-                        <img alt="Image placeholder"
-                          src="../assets/img/team-3.jpg">
-                      </a>
-                      <a href="javascript:;"
-                        class="avatar avatar-xs rounded-circle"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        title="Jessica Doe">
-                        <img alt="Image placeholder"
-                          src="../assets/img/team-1.jpg">
-                      </a>
-                    </div>
-                  </td>
-                  <td class="align-middle text-center text-sm">
-                    <span class="text-xs font-weight-bold"> غير مضبوط </span>
-                  </td>
-                  <td class="align-middle">
-                    <div class="progress-wrapper w-75 mx-auto">
-                      <div class="progress-info">
-                        <div class="progress-percentage">
-                          <span class="text-xs font-weight-bold">100%</span>
-                        </div>
-                      </div>
-                      <div class="progress">
-                        <div class="progress-bar bg-gradient-success w-100"
-                          role="progressbar" aria-valuenow="100"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="d-flex px-2 py-1">
-                      <div>
-                        <img src="../assets/img/small-logos/logo-spotify.svg"
-                          class="avatar avatar-sm ms-3">
-                      </div>
-                      <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm">إطلاق تطبيق الهاتف المحمول
-                          الخاص بنا</h6>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="avatar-group mt-2">
-                      <a href="javascript:;"
-                        class="avatar avatar-xs rounded-circle"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        title="Ryan Tompson">
-                        <img alt="Image placeholder"
-                          src="../assets/img/team-4.jpg">
-                      </a>
-                      <a href="javascript:;"
-                        class="avatar avatar-xs rounded-circle"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        title="Romina Hadid">
-                        <img alt="Image placeholder"
-                          src="../assets/img/team-3.jpg">
-                      </a>
-                      <a href="javascript:;"
-                        class="avatar avatar-xs rounded-circle"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        title="Alexander Smith">
-                        <img alt="Image placeholder"
-                          src="../assets/img/team-4.jpg">
-                      </a>
-                      <a href="javascript:;"
-                        class="avatar avatar-xs rounded-circle"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        title="Jessica Doe">
-                        <img alt="Image placeholder"
-                          src="../assets/img/team-1.jpg">
-                      </a>
-                    </div>
-                  </td>
-                  <td class="align-middle text-center text-sm">
-                    <span class="text-xs font-weight-bold"> $20,500 </span>
-                  </td>
-                  <td class="align-middle">
-                    <div class="progress-wrapper w-75 mx-auto">
-                      <div class="progress-info">
-                        <div class="progress-percentage">
-                          <span class="text-xs font-weight-bold">100%</span>
-                        </div>
-                      </div>
-                      <div class="progress">
-                        <div class="progress-bar bg-gradient-success w-100"
-                          role="progressbar" aria-valuenow="100"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="d-flex px-2 py-1">
-                      <div>
-                        <img src="../assets/img/small-logos/logo-jira.svg"
-                          class="avatar avatar-sm ms-3">
-                      </div>
-                      <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm">أضف صفحة التسعير الجديدة</h6>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="avatar-group mt-2">
-                      <a href="javascript:;"
-                        class="avatar avatar-xs rounded-circle"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        title="Ryan Tompson">
-                        <img alt="Image placeholder"
-                          src="../assets/img/team-4.jpg">
-                      </a>
-                    </div>
-                  </td>
-                  <td class="align-middle text-center text-sm">
-                    <span class="text-xs font-weight-bold"> $500 </span>
-                  </td>
-                  <td class="align-middle">
-                    <div class="progress-wrapper w-75 mx-auto">
-                      <div class="progress-info">
-                        <div class="progress-percentage">
-                          <span class="text-xs font-weight-bold">25%</span>
-                        </div>
-                      </div>
-                      <div class="progress">
-                        <div class="progress-bar bg-gradient-info w-25"
-                          role="progressbar" aria-valuenow="25"
-                          aria-valuemin="0" aria-valuemax="25"></div>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="d-flex px-2 py-1">
-                      <div>
-                        <img src="../assets/img/small-logos/logo-invision.svg"
-                          class="avatar avatar-sm ms-3">
-                      </div>
-                      <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm">إعادة تصميم متجر جديد على
-                          الإنترنت</h6>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="avatar-group mt-2">
-                      <a href="javascript:;"
-                        class="avatar avatar-xs rounded-circle"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        title="Ryan Tompson">
-                        <img alt="Image placeholder"
-                          src="../assets/img/team-1.jpg">
-                      </a>
-                      <a href="javascript:;"
-                        class="avatar avatar-xs rounded-circle"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        title="Jessica Doe">
-                        <img alt="Image placeholder"
-                          src="../assets/img/team-4.jpg">
-                      </a>
-                    </div>
-                  </td>
-                  <td class="align-middle text-center text-sm">
-                    <span class="text-xs font-weight-bold"> $2,000 </span>
-                  </td>
-                  <td class="align-middle">
-                    <div class="progress-wrapper w-75 mx-auto">
-                      <div class="progress-info">
-                        <div class="progress-percentage">
-                          <span class="text-xs font-weight-bold">40%</span>
-                        </div>
-                      </div>
-                      <div class="progress">
-                        <div class="progress-bar bg-gradient-info w-40"
-                          role="progressbar" aria-valuenow="40"
-                          aria-valuemin="0" aria-valuemax="40"></div>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
+              <tbody id="table-admin-tbody">
+
               </tbody>
             </table>
+            <div class="container-fluid p-2" style="text-align: center;"
+              id="table-admin-pagination"></div>
           </div>
         </div>
       </div>
@@ -638,10 +305,11 @@
     <div class="col-lg-4 col-md-6">
       <div class="card h-100">
         <div class="card-header pb-0">
-          <h6>اخرین فعالیت ها</h6>
+          <h6>اطلاعات</h6>
           <p class="text-sm">
             <i class="fa fa-arrow-up text-success" aria-hidden="true"></i>
-            <span class="font-weight-bold"></span>اخرین فعالیت کاربران ادمین
+            <span class="font-weight-bold"></span>هزینه ی ارسال هر پیامک کمتر از
+            1000 تومن است
           </p>
         </div>
         <div class="card-body p-3">
@@ -649,13 +317,13 @@
             <div class="timeline-block mb-3">
               <span class="timeline-step">
                 <i
-                  class="material-symbols-rounded text-success text-gradient">notifications</i>
+                  class="material-symbols-rounded text-success text-gradient">credit_card</i>
               </span>
               <div class="timeline-content">
-                <h6 class="text-dark text-sm font-weight-bold mb-0">یک پروفایل
-                  جدید ثبت کرد</h6>
-                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">22
-                  DEC 7:20 PM</p>
+                <h6 class="text-dark text-sm font-weight-bold mb-0">موجودی پنل
+                  پیامکی</h6>
+                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"
+                  id="smsPrice">درحال جمع اوری اطلاعات</p>
               </div>
             </div>
             <div class="timeline-block mb-3">
@@ -664,10 +332,10 @@
                   class="material-symbols-rounded text-danger text-gradient">code</i>
               </span>
               <div class="timeline-content">
-                <h6 class="text-dark text-sm font-weight-bold mb-0">یک کاربر را
-                  اپدیت کرد</h6>
-                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">21
-                  DEC 11 PM</p>
+                <h6 class="text-dark text-sm font-weight-bold mb-0">تعداد کل
+                  کاربران</h6>
+                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"
+                  id="userCount">درحال جمع اوری اطلاعات</p>
               </div>
             </div>
             <div class="timeline-block mb-3">
@@ -676,46 +344,22 @@
                   class="material-symbols-rounded text-info text-gradient">shopping_cart</i>
               </span>
               <div class="timeline-content">
-                <h6 class="text-dark text-sm font-weight-bold mb-0">یک خرید ثبت
-                  کرد</h6>
-                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">21
-                  DEC 9:34 PM</p>
+                <h6 class="text-dark text-sm font-weight-bold mb-0">تعداد کل
+                  درخواست ها</h6>
+                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"
+                  id="reqCunt">درحال جمع اوری اطلاعات</p>
               </div>
             </div>
             <div class="timeline-block mb-3">
               <span class="timeline-step">
                 <i
-                  class="material-symbols-rounded text-warning text-gradient">credit_card</i>
+                  class="material-symbols-rounded text-warning text-gradient">key</i>
               </span>
               <div class="timeline-content">
-                <h6 class="text-dark text-sm font-weight-bold mb-0">پنل پیامکی
-                  رو اپدیت کرد</h6>
-                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">20
-                  DEC 2:20 AM</p>
-              </div>
-            </div>
-            <div class="timeline-block mb-3">
-              <span class="timeline-step">
-                <i
-                  class="material-symbols-rounded text-primary text-gradient">key</i>
-              </span>
-              <div class="timeline-content">
-                <h6 class="text-dark text-sm font-weight-bold mb-0">یک کاربر را
-                  مسدود کرد</h6>
-                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">18
-                  DEC 4:54 AM</p>
-              </div>
-            </div>
-            <div class="timeline-block">
-              <span class="timeline-step">
-                <i
-                  class="material-symbols-rounded text-dark text-gradient">payments</i>
-              </span>
-              <div class="timeline-content">
-                <h6 class="text-dark text-sm font-weight-bold mb-0">یک کاربر به
-                  بلک لیست اضافه کرد</h6>
-                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">17
-                  DEC</p>
+                <h6 class="text-dark text-sm font-weight-bold mb-0">تعداد
+                  کاربران غیرفعال</h6>
+                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0"
+                  id="adminCount">درحال جمع اوری اطلاعات</p>
               </div>
             </div>
           </div>
@@ -745,11 +389,11 @@
                 target="_blank">درباره ما</a>
             </li>
             <li class="nav-item">
-              <a href="https://www.creative-tim.com/presentation"
+              <a href="https://github.com/amili-code/routerInterface"
                 class="nav-link text-muted" target="_blank">درباره نرم افزار</a>
             </li>
             <li class="nav-item">
-              <a href="https://www.creative-tim.com/blog"
+              <a href="/toturial"
                 class="nav-link text-muted" target="_blank">یادگیری</a>
             </li>
             <li class="nav-item">
@@ -762,6 +406,32 @@
     </div>
   </footer>
 </div>
+<p style="display: none;" id="routerIp"><%= routerIp %></p>
+<script>
+    createTable("جدول پروفایل ها" , "admin-log" , "table-admin")
+    async function smsPrice(){
+      const data = await apiRequest('/dash')
+      const data1 = await apiRequest('/client')
+      const data2 = await apiRequest('/req')
+      const data3 = await apiRequest('/block-client')
+      const data4 = await apiRequest('/active-client')
+      const data5 = await apiRequest('/routers')
+      const data6 = await apiRequest('/limitation')
+      const data7 = await apiRequest('/profile')
+
+      document.getElementById(`smsPrice`).textContent = `موجودی شما : ${data.cash / 10} تومان`
+      document.getElementById(`userCount`).textContent = `تعداد کل کاربران :  ${data1.length}`
+      document.getElementById(`reqCunt`).textContent = `تعداد کل درخواست ها :  ${data2.length}`
+      document.getElementById(`adminCount`).textContent = `تعداد کل کاربران غیرفعال :  ${data3.length}`
+      document.getElementById(`activeClientCount`).textContent = `کاربران فعال : ${data4.length}`
+      document.getElementById(`routerCount`).textContent = `روتر ها: ${data5.length}`
+      document.getElementById(`limitationCount`).textContent = `محدودیت ها: ${data6.length}`
+      document.getElementById(`profileCount`).textContent = `پروفایل ها: ${data7.length}`
+    }
+
+    smsPrice()
+    
+  </script>
 
 <script>
         $(document).ready(async function () {
@@ -771,7 +441,6 @@
             const progressContainer = $("#progress-container");
             const resultContainer = $("#result-dashboard-router");
             const dailyData = $("#daily-data");
-
             // دریافت لیست روترها از API
             async function getRouters() {
                 const routers = await apiRequest("/routers"); // شبیه‌سازی درخواست API
@@ -795,6 +464,8 @@
             $("#interface-list").on("change", function () {
                 progressContainer.show();
                 let progress = 0;
+                const interfaceListValue = document.getElementById('interface-list').value
+                const routerIp = document.getElementById('routerIp').textContent
                 let interval = setInterval(() => {
                     progress += 20;
                     progressBar.css("width", progress + "%");
@@ -804,6 +475,10 @@
                         document.getElementById('result-dashboard-router').style.display='flex'
                         apiRequest(`/router-information/${routerSelect.val()}&2`).then((data) => {
                           createHardwareChart(data)
+                          document.getElementById("daily-data").src =   `http://${routerIp}/graphs/iface/${interfaceListValue}/daily.gif`
+                          document.getElementById("weekly-data").src =  `http://${routerIp}/graphs/iface/${interfaceListValue}/weekly.gif`
+                          document.getElementById("monthly-data").src = `http://${routerIp}/graphs/iface/${interfaceListValue}/monthly.gif`
+                          document.getElementById("yearly-data").src =  `http://${routerIp}/graphs/iface/${interfaceListValue}/yearly.gif`
                         }).catch((err) => {
                           
                         });
@@ -826,7 +501,8 @@
             
         });
     </script>
-    <script>
+
+<script>
       async function createHardwareChart(inf){
         var ctx = document.getElementById("chart-bars").getContext("2d");
         const allMemory = parseFloat(inf.data.total_memory); // 1952.0
@@ -907,61 +583,69 @@
       }
     </script>
 
-
-
 <script>
 
-  
 
-    const chartData = [
-        { date: "1403-12-11", weekday: "شنبه", totalDownload: 12.6, totalUpload: 61.1, totalTraffic: 73.7 },
-        { date: "1403-12-12", weekday: "یک‌شنبه", totalDownload: 1960.2, totalUpload: 1776.7, totalTraffic: 3736.9 },
-        { date: "1403-12-13", weekday: "دوشنبه", totalDownload: 1878.5, totalUpload: 272.8, totalTraffic: 2151.3 }
-    ];
-    let chart;
-  
-    function createChart() {
-        const ctx = document.getElementById('usage-chart').getContext('2d');
-        const labels = chartData.map(item => item.weekday);
-        
-        const datasets = [];
-        document.querySelectorAll('input[type=checkbox]:checked').forEach(checkbox => {
-            const key = checkbox.value;
-            const colors = {
-                totalTraffic: "#43A047",
-                totalDownload: "#1E88E5",
-                totalUpload: "#E53935"
-            };
-            datasets.push({
-                label: checkbox.nextSibling.textContent,
-                data: chartData.map(item => item[key]),
-                borderColor: colors[key],
-                backgroundColor: colors[key] + "33",
-                borderWidth: 2,
-                tension: 0.4,
-                pointRadius: 4,
-                pointBackgroundColor: colors[key]
-            });
-        });
-        
-        const config = {
-            type: 'line',
-            data: { labels, datasets },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: 'top' },
-                    title: { display: true, text: 'مصرف اینترنت بر اساس روزهای هفته' }
-                }
-            }
-        };
-        
-        if (chart) chart.destroy();
-        chart = new Chart(ctx, config);
+let chart;
+let chartData = [];
+
+async function fetchChartData() {
+    try {
+        const response = await apiRequest("/useage");
+        chartData = await response;
+        createChart();
+    } catch (error) {
+        console.error("خطا در دریافت داده‌ها:", error);
     }
+}
 
-    function updateChart() { createChart(); }
+function createChart() {
+    const ctx = document.getElementById('usage-chart').getContext('2d');
+    const labels = chartData.map(item => item.weekday);
+
+    const datasets = [];
+    document.querySelectorAll('input[type=checkbox]:checked').forEach(checkbox => {
+        const key = checkbox.value;
+        const colors = {
+            totalTraffic: "#43A047",
+            totalDownload: "#1E88E5",
+            totalUpload: "#E53935"
+        };
+        datasets.push({
+            label: checkbox.nextSibling.textContent,
+            data: chartData.map(item => item[key]),
+            borderColor: colors[key],
+            backgroundColor: colors[key] + "33",
+            borderWidth: 2,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: colors[key]
+        });
+    });
+
+    const config = {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'مصرف اینترنت بر اساس روزهای هفته' }
+            }
+        }
+    };
+
+    if (chart) chart.destroy();
+    chart = new Chart(ctx, config);
+}
+
+function updateChart() {
     createChart();
+}
+
+// دریافت داده‌ها از API و ایجاد چارت
+fetchChartData();
+
 </script>
 
 <style>

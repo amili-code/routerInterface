@@ -16,96 +16,105 @@
                         <h6>جستجو</h6>
 
                         <div class="col input-group input-group-outline my-3">
-                            <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            <label
+                                class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                 از تاریخ (مثال: ۱۴۰۲/۱۲/۱۰)
                             </label>
-                            <input type="text" id="startDate" class="form-control" placeholder="">
+                            <input type="text" id="startDate"
+                                class="form-control" placeholder>
                         </div>
 
                         <div class="col input-group input-group-outline my-3">
-                            <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            <label
+                                class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                 تا تاریخ (مثال: ۱۴۰۲/۱۲/۲۰)
                             </label>
-                            <input type="text" id="endDate" class="form-control" placeholder="">
+                            <input type="text" id="endDate" class="form-control"
+                                placeholder>
                         </div>
 
                         <div class="col input-group input-group-outline my-3">
-                            <label class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            <label
+                                class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                 تعداد کاربران پرمصرف
                             </label>
-                            <input type="number" id="userLimit" class="form-control" min="1" max="100">
+                            <input type="number" id="userLimit"
+                                class="form-control" min="1" max="100">
                         </div>
 
                         <div class="col input-group input-group-outline my-3">
-                            <input type="submit" value="جستجو" class="btn bg-gradient-dark w-100 mb-2">
-                        </div> 
+                            <input type="submit" value="جستجو"
+                                class="btn bg-gradient-dark w-100 mb-2">
+                        </div>
                     </form>
                     <div class="table-responsive p-0">
                         <table class="table align-items-center mb-0"
                             id="table-mousted">
                             <thead>
                                 <tr id="table-mousted-tr">
-                              
+
                                 </thead>
                                 <tbody id="table-mousted-tbody">
                                 </tbody>
                             </table>
-                            <div class="container-fluid p-2" style="text-align: center;" id="table-mousted-pagination"></div>
+                            <div class="container-fluid p-2"
+                                style="text-align: center;"
+                                id="table-mousted-pagination"></div>
 
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-            <footer class="footer py-4  ">
-                <div class="container-fluid">
-                    <div
-                        class="row align-items-center justify-content-lg-between">
-                        <div class="col-lg-6 mb-lg-0 mb-4">
-                            <div
-                                class="copyright text-center text-sm text-muted text-lg-end">
-                                © <script>
+        <footer class="footer py-4  ">
+            <div class="container-fluid">
+                <div
+                    class="row align-items-center justify-content-lg-between">
+                    <div class="col-lg-6 mb-lg-0 mb-4">
+                        <div
+                            class="copyright text-center text-sm text-muted text-lg-end">
+                            © <script>
                   document.write(new Date().getFullYear())
                 </script>,
-                                ساخته شده <i class="fa fa-heart"></i> توسط
-                                <a href="https://www.github.com/amili-code"
-                                    class="font-weight-bold"
-                                    target="_blank">amili-code</a>
-                                برای مدیریت اسان تر
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <ul
-                                class="nav nav-footer justify-content-center justify-content-lg-end">
-                                <li class="nav-item">
-                                    <a href="https://www.creative-tim.com"
-                                        class="nav-link text-muted"
-                                        target="_blank">درباره ما</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a
-                                        href="https://www.creative-tim.com/presentation"
-                                        class="nav-link text-muted"
-                                        target="_blank">درباره نرم افزار</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="https://www.creative-tim.com/blog"
-                                        class="nav-link text-muted"
-                                        target="_blank">یادگیری</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="https://amili-code.github.io"
-                                        class="nav-link pe-0 text-muted"
-                                        target="_blank">من</a>
-                                </li>
-                            </ul>
+                            ساخته شده <i class="fa fa-heart"></i> توسط
+                            <a href="https://www.github.com/amili-code"
+                                class="font-weight-bold"
+                                target="_blank">amili-code</a>
+                            برای مدیریت اسان تر
                         </div>
                     </div>
+                    <div class="col-lg-6">
+                        <ul
+                            class="nav nav-footer justify-content-center justify-content-lg-end">
+                            <li class="nav-item">
+                                <a href="https://www.creative-tim.com"
+                                    class="nav-link text-muted"
+                                    target="_blank">درباره ما</a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    href="https://github.com/amili-code/routerInterface"
+                                    class="nav-link text-muted"
+                                    target="_blank">درباره نرم افزار</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/toturial"
+                                    class="nav-link text-muted"
+                                    target="_blank">یادگیری</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://amili-code.github.io"
+                                    class="nav-link pe-0 text-muted"
+                                    target="_blank">من</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </footer>
-        </div>
+            </div>
+        </footer>
+    </div>
 
-<script>
+    <script>
 document.getElementById("moustedForm").addEventListener("submit", function(event) {
     event.preventDefault();
 

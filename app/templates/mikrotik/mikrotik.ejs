@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fa">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ورود به شبکه میکروتیک</title>
+        <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 50px;
+        }
+        .login-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+            width: 300px;
+            margin: auto;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #218838;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+    </head>
+    <body>
+
+        <div class="login-box">
+            <h2>ورود به اینترنت</h2>
+            <input type="text" id="username" placeholder="نام کاربری">
+            <input type="password" id="password" placeholder="رمز عبور">
+            <button onclick="loginMikrotik()">ورود</button>
+            <div id="response" class="response"></div>
+        </div>
+
+        <script>
+        async function loginMikrotik() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const responseDiv = document.getElementById("response");
+
+            if (!username || !password) {
+                responseDiv.innerHTML = "لطفاً نام کاربری و رمز عبور را وارد کنید!";
+                responseDiv.style.display = "block";
+                responseDiv.style.background = "#ffc107";
+                return;
+            }
+
+            try {
+                const response = await fetch("http://192.168.22.1/login", {
+                    method: "POST",
+                    ode: "no-cors",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+                });
+
+                const text = await response.text();
+
+                if (text.includes("logged_in")) {
+                    responseDiv.innerHTML = "✅ ورود موفقیت‌آمیز!";
+                    responseDiv.style.background = "#28a745";
+                } else {
+                    responseDiv.innerHTML = "❌ ورود ناموفق! لطفاً اطلاعات را بررسی کنید.";
+                    responseDiv.style.background = "#dc3545";
+                }
+                responseDiv.style.display = "block";
+
+            } catch (error) {
+                responseDiv.innerHTML = "⛔ خطا در ارتباط با سرور!";
+                responseDiv.style.background = "#dc3545";
+                responseDiv.style.display = "block";
+            }
+        }
+    </script>
+
+    </body>
+</html>

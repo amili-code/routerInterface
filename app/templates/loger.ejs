@@ -14,13 +14,24 @@
                     <form class="form row container-fluid" id="logerForm">
                         <h6>جستجو</h6>
 
-                        <div class="col input-group input-group-outline my-3">
+                        <div
+                            class="col input-group input-group-outline my-3 position-relative">
                             <label
                                 class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                 نام کاربر را وارد کنید
                             </label>
                             <input type="text" id="logUsername"
-                                class="form-control" placeholder required>
+                                class="form-control" placeholder required
+                                autocomplete="off"
+                                autocorrect="off"
+                                spellcheck="false"
+                                autocapitalize="none">
+
+                            <!-- لیست کاربران ستاره دار -->
+                            <ul id="starredUsersList"
+                                class="dropdown-menu w-100 shadow"
+                                style="display: none; position: absolute; top: 100%; left: 0; z-index: 1000;">
+                            </ul>
                         </div>
                         <div class="col input-group input-group-outline my-3">
                             <label
@@ -100,12 +111,12 @@
                         </li>
                         <li class="nav-item">
                             <a
-                                href="https://www.creative-tim.com/presentation"
+                                href="https://github.com/amili-code/routerInterface"
                                 class="nav-link text-muted"
                                 target="_blank">درباره نرم افزار</a>
                         </li>
                         <li class="nav-item">
-                            <a href="https://www.creative-tim.com/blog"
+                            <a href="/toturial"
                                 class="nav-link text-muted"
                                 target="_blank">یادگیری</a>
                         </li>
@@ -122,97 +133,142 @@
 </div>
 
 <script>
-let chartInstance = null;
+    document.addEventListener("DOMContentLoaded", async function () {
+        const input = document.getElementById("logUsername");
+        const list = document.getElementById("starredUsersList");
 
-     document.getElementById("logerForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
-            const userName = document.getElementById("logUsername").value;
-            const year = document.getElementById("logYear").value;
-            const month = document.getElementById("logMonth").value;
-            const day = document.getElementById("logDay").value;
-            
-            const queryParams = new URLSearchParams({ userName });
-            if (year) queryParams.append("year", year);
-            if (month) queryParams.append("month", month);
-            if (day) queryParams.append("day", day);
-            
-            const data = await apiRequest(`/loger?${queryParams.toString()}`);
-            // const data = await response.json();
-            renderChart(data, year, month, day);
-        });
-
-        
-       function renderChart(data) {
-        const ctx = document.getElementById("logChart").getContext("2d");
-        if (window.myChart) {
-            window.myChart.destroy();
+        // واکشی کاربران ستاره‌دار
+        async function fetchStarredUsers() {
+            try {
+                const clients = await apiRequest('/client');
+                return clients.filter(client => client.star); // فقط کاربران ستاره‌دار
+            } catch (error) {
+                console.error("خطا در دریافت کاربران:", error);
+                return [];
+            }
         }
 
-        let labels = [];
-        let downloads = [];
-        let uploads = [];
+        // نمایش لیست کاربران ستاره‌دار
+        async function showUserList() {
+            const users = await fetchStarredUsers();
+            if (users.length === 0) return;
 
-        console.log(data);
+            list.innerHTML = ""; // پاک کردن لیست قدیمی
+            users.forEach(user => {
+                const li = document.createElement("li");
+                li.classList.add("dropdown-item");
+                li.textContent = user.name || user.fullName; // اگر fullName وجود دارد، نمایش بدهد
+                li.style.cursor = "pointer";
+                li.addEventListener("click", () => {
+                    input.value = user.name; // تنظیم مقدار اینپوت
+                    list.style.display = "none"; // بستن لیست
+                });
+                list.appendChild(li);
+            });
 
-        for (const year in data) {
-            if (Object.keys(data[year]).length === 1 && "uptime" in data[year]) {
-                // حالتی که فقط سال انتخاب شده
-                labels.push(year);
-                downloads.push(parseInt(data[year].download) || 0);
-                uploads.push(parseInt(data[year].upload) || 0);
-            } else {
-                for (const month in data[year]) {
-                    if (month === "uptime") continue;
-                    if (Object.keys(data[year][month]).length === 1 && "uptime" in data[year][month]) {
-                        // حالتی که فقط ماه انتخاب شده
-                        labels.push(`${year}/${month}`);
-                        downloads.push(parseInt(data[year][month].download) || 0);
-                        uploads.push(parseInt(data[year][month].upload) || 0);
-                    } else {
-                        for (const day in data[year][month]) {
-                            if (day === "uptime") continue;
-                            if (Array.isArray(data[year][month][day])) {
-                                // حالتی که روز انتخاب شده است
-                                data[year][month][day].forEach(entry => {
-                                    labels.push(`${year}/${month}/${day} ${entry.time}`);
-                                    downloads.push(parseInt(entry.download) || 0);
-                                    uploads.push(parseInt(entry.upload) || 0);
-                                });
-                            } else {
-                                // حالت نمایش داده‌های روزانه بدون تایم
-                                labels.push(`${year}/${month}/${day}`);
-                                downloads.push(parseInt(data[year][month][day].download) || 0);
-                                uploads.push(parseInt(data[year][month][day].upload) || 0);
-                            }
-                        }
-                    }
+            list.style.display = "block"; // نمایش لیست
+        }
+
+        // بستن لیست هنگام کلیک بیرون
+        document.addEventListener("click", (event) => {
+            if (!input.contains(event.target) && !list.contains(event.target)) {
+                list.style.display = "none";
+            }
+        });
+
+        // نمایش لیست هنگام کلیک روی اینپوت
+        input.addEventListener("focus", showUserList);
+    });
+</script>
+
+<script>
+        let chartInstance = null;
+document.getElementById("logerForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+    const userName = document.getElementById("logUsername").value;
+    const year = document.getElementById("logYear").value;
+    const month = document.getElementById("logMonth").value;
+    const day = document.getElementById("logDay").value;
+    
+    let apiUrl = `/loger/${userName}`;
+    if (year) apiUrl += `/${year}`;
+    if (month) apiUrl += `/${month}`;
+    if (day) apiUrl += `/${day}`;
+    
+    const data = await apiRequest(apiUrl);
+    renderChart(data, year, month, day);
+});
+
+function renderChart(data, year, month, day) {
+    const ctx = document.getElementById("logChart").getContext("2d");
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
+
+    let labels = [];
+    let downloads = [];
+    let uploads = [];
+    let uptimes = [];
+    let totalTransfers = [];
+    let labelPrefix = year ? (month ? (day ? "ساعت " : "روز ") : "ماه ") : "سال ";
+
+    console.log(data);
+    
+    data.forEach(entry => {
+        let label = `${labelPrefix}${entry.year || entry.month || entry.day || entry.hour}`;
+        labels.push(label);
+        downloads.push(parseFloat(entry.download) || 0);
+        uploads.push(parseFloat(entry.upload) || 0);
+        uptimes.push(parseUptime(entry.uptime));
+        totalTransfers.push((parseFloat(entry.download) || 0) + (parseFloat(entry.upload) || 0));
+    });
+    
+    chartInstance = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: "دانلود (MB)",
+                    borderColor: "blue",
+                    backgroundColor: "rgba(0,0,255,0.1)",
+                    data: downloads,
+                    fill: true
+                },
+                {
+                    label: "آپلود (MB)",
+                    borderColor: "red",
+                    backgroundColor: "rgba(255,0,0,0.1)",
+                    data: uploads,
+                    fill: true
+                },
+                {
+                    label: "مجموع انتقال داده (MB)",
+                    borderColor: "purple",
+                    backgroundColor: "rgba(128,0,128,0.1)",
+                    data: totalTransfers,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
                 }
             }
         }
+    });
+}
 
-        window.myChart = new Chart(ctx, {
-            type: "bar",
-            data: {
-                labels,
-                datasets: [
-                    {
-                        label: "دانلود (MB)",
-                        backgroundColor: "blue",
-                        data: downloads
-                    },
-                    {
-                        label: "آپلود (MB)",
-                        backgroundColor: "red",
-                        data: uploads
-                    }
-                ]
-            }
-        });
+function parseUptime(uptime) {
+    const match = uptime.match(/(\d+)m(\d+)s/);
+    if (match) {
+        return parseInt(match[1]) + parseInt(match[2]) / 60; // تبدیل به دقیقه
     }
-
-
-
-
+    return 0;
+}
 
 
 </script>

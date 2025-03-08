@@ -23,13 +23,16 @@ function generateToken(user) {
     );
 }
 
+
 function verifyToken(token) {
     try {
+        if (!token) return { login: false };
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        return { login: true, name: decoded.name, email: decoded.email, id: decoded.id };
+        return { login: true, id: decoded.id, name: decoded.name };
     } catch (error) {
-        return { login: false, error: 'Invalid or expired token' };
+        return { login: false };
     }
 }
+
 
 module.exports = { hashPassword, comparePassword, generateToken, verifyToken };

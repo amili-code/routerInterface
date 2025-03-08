@@ -197,7 +197,7 @@ class ClientController {
     async create(req, res) {
         try {
             const { name, username, password, fullName, roomNumber, profileId, ClientCount } = req.body;
-
+            
             // بررسی وجود پروفایل قبل از ایجاد کاربر
 
             const profile = await Profile.findByPk(profileId);
@@ -235,7 +235,7 @@ class ClientController {
                     'upload',
                     'lastAccountingPacket'
                 ],
-                order: [['createdAt', 'DESC']],
+                order: [['id', 'DESC']],
                 raw: true
             });
 
@@ -246,7 +246,7 @@ class ClientController {
         }
     }
 
-    async starClient(req, res) {
+    async starClient(req, res) {    
         try {
             const id = req.params.id;
             const user = await User.findByPk(id);
@@ -308,7 +308,6 @@ class ClientController {
     async terminated(req, res) {
         // try {
         const sessionId = req.params.id
-        console.log(sessionId);
         const session = await Session.findOne({ where: { acctSessionId: sessionId } })
         if (!session) res.status(404).json('session not founded')
         const user = await User.findOne({ where: { name: session.userName } });
@@ -471,7 +470,6 @@ class ClientController {
                 const response = await executeCommand(router, `user-manager/session/print where active=yes`);
                 const sessions = parseSessionDatae(response);
 
-                console.log(`تعداد کاربران فعال دریافت‌شده از روتر ${router.name}: ${sessions.length}`);
 
                 const filteredSessions = sessions.map(session => ({
                     userName: session.user, // استفاده از userName به جای userId
@@ -503,7 +501,6 @@ class ClientController {
 
                 const response = await executeCommand(router, `user-manager/session/print`);
                 const sessions = parseSessionDatae(response);
-                console.log(`تعداد سشن‌های دریافت‌شده: ${sessions.length}`);
 
                 const newSessions = [];
 
@@ -533,7 +530,6 @@ class ClientController {
 
                 if (newSessions.length > 0) {
                     await Session.bulkCreate(newSessions);
-                    console.log(`${newSessions.length} سشن جدید اضافه شد.`);
                 }
             }
 
@@ -701,7 +697,7 @@ class ClientController {
     }
 
 
-    
+
 
 }
 

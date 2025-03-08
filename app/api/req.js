@@ -2,6 +2,9 @@ const Router = require('../model/Routers')
 const { executeCommand } = require('../command/routerCommand');
 const Profile = require('../model/Profile');
 const Req = require('../model/Req');
+const Client = require('../model/Client');
+const axios = require("axios");
+
 
 function generateRandomChars(length) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -13,112 +16,151 @@ function generateRandomChars(length) {
     return result;
 }
 
+async function sendSms(number, family , key) {
+    
+    try {
+        let url = 'https://portal.amootsms.com/rest/SendSimple';
+        url += '?Token=' + encodeURIComponent(`${process.env.AMOT_TOKEN}`);
+        url += '&SendDateTime=2020-01-01 12:00:00';
+        url += '&SMSMessageText=' + encodeURIComponent(`کاربر ${family} اطلاعات شما در سامانه هتل سلام با موفقیت ثبت شد .\n نام کاربری و رمز عبور:${key}`);
+        url += '&LineNumber=service';
+        url += `&Mobiles=${number}`;
+
+        const response = await axios.get(url);
+        console.log(response.data);
+        return response.data; // خروجی پیامک را برمی‌گردانیم
+    } catch (error) {
+        console.error("خطا در ارسال پیامک:", error.message);
+        throw new Error("خطا در ارسال پیامک");
+    }
+}
+async function sendSms2(number, family) {
+    console.log(number);
+    try {
+        let url = 'https://portal.amootsms.com/rest/SendSimple';
+        url += '?Token=' + encodeURIComponent(`${process.env.AMOT_TOKEN}`);
+        url += '&SendDateTime=2020-01-01 12:00:00';
+        url += '&SMSMessageText=' + encodeURIComponent(`کاربر ${family} اطلاعات شما در سامانه هتل سلام تایید نشد.`);
+        url += '&LineNumber=service';
+        url += `&Mobiles=${number}`;
+
+        const response = await axios.get(url);
+        console.log(response.data);
+        return response.data; // خروجی پیامک را برمی‌گردانیم
+    } catch (error) {
+        console.error("خطا در ارسال پیامک:", error.message);
+        throw new Error("خطا در ارسال پیامک");
+    }
+}
+async function cahs() {
+    try {
+        let url = `https://portal.amootsms.com/rest/AccountStatus?token=${process.env.AMOT_TOKEN}`
+        const response = await axios.get(url);
+        // console.log(response.data);
+        return response.data.RemaindCredit; // خروجی پیامک را برمی‌گردانیم
+    } catch (error) {
+        console.error("خطا در ارسال پیامک:", error.message);
+        throw new Error("خطا در ارسال پیامک");
+    }
+}
+
 class reqController {
     async getAll(req, res) {
         try {
-            const reqs = await Req.findAll();
-            res.status(200).json(reqs);
+
+
+            const reqs = await Req.findAll({
+                include: [
+                    {
+                        model: Profile,
+                        attributes: ["name", "price"],
+                    },
+                ],
+                attributes: { exclude: ["profileId"] },
+            });
+
+            const formattedReq = reqs.map(req => {
+                const { Profile, ...rest } = req.toJSON(); // جدا کردن star
+
+                return {
+                    ...rest,
+                    profileName: Profile ? Profile.name : null,
+                    profilePrice: Profile ? Profile.price : null,
+                };
+            });
+
+            res.status(200).json(formattedReq);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
     }
 
     async create(req, res) {
-    try {
-        const obj = req.body;
-
-        // استخtraction دو رقم اول شماره اتاق
-        const roomPrefix = obj.room.toString().padStart(2, '0').slice(0, 2);
-
-        // تولید دو کاراکتر رندوم (الفبا)
-        const randomChars = generateRandomChars(2);
-
-        // استخراج دو عدد آخر کد ملی
-        const codeSuffix = obj.code.toString().slice(-2);
-
-        // ترکیب تمام بخش‌ها برای تولید یوزرنیم
-        const userName = `${roomPrefix}${randomChars}${codeSuffix}`;
-        const password = userName
-        // اضافه کردن یوزرنیم به آبجکت خروجی
-        obj.userName = userName;
-        obj.password = password;
-        obj.profileId = req.body.profileSelect;
-
-        await Req.create(obj)
-        res.status(200).json(obj);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-}
-
-
-    async information(req, res) {
-
-        const router = await Router.findByPk(req.params.id);
-        if (!router) return res.status(404).json({ message: "روتر پیدا نشد" });
-
-        const data = await executeCommand(router, "/system resource print");
-
-        if (!data) return res.status(500).json({ message: "خطا در دریافت اطلاعات از روتر" });
-
-        // پردازش خروجی و استخراج مقادیر مورد نیاز
-        const parsedData = {};
-        data.split("\r\n").forEach(line => {
-            if (line.includes("uptime:")) parsedData.uptime = line.split("uptime:")[1].trim();
-            if (line.includes("platform:")) parsedData.platform = line.split("platform:")[1].trim();
-            if (line.includes("cpu-count:")) parsedData.cpu_cores = line.split("cpu-count:")[1].trim();
-            if (line.includes("total-memory:")) parsedData.total_memory = line.split("total-memory:")[1].trim();
-            if (line.includes("free-memory:")) parsedData.free_memory = line.split("free-memory:")[1].trim();
-        });
-
-        // محاسبه میزان حافظه اشغال شده
-        const totalMemoryMB = parseFloat(parsedData.total_memory);
-        const freeMemoryMB = parseFloat(parsedData.free_memory);
-        const usedMemoryMB = (totalMemoryMB - freeMemoryMB).toFixed(2) + "MiB";
-
-        // ساختن پاسخ نهایی
-        const result = {
-            uptime: parsedData.uptime,
-            platform: parsedData.platform,
-            cpu_cores: parsedData.cpu_cores,
-            total_memory: parsedData.total_memory,
-            used_memory: usedMemoryMB,
-            free_memory: parsedData.free_memory
-        };
-
-        res.status(200).json({ message: "اتصال موفق!", data: result });
-    }
-
-
-    async connection(req, res) {
         try {
-            const router = await Router.findByPk(req.params.id);
+            const obj = req.body;
 
-            if (!router) {
-                return res.status(404).json({ message: "روتر پیدا نشد" });
+            // استخtraction دو رقم اول شماره اتاق
+            const roomPrefix = obj.room.toString().padStart(2, '0').slice(0, 2);
+
+            // تولید دو کاراکتر رندوم (الفبا)
+            const randomChars = generateRandomChars(2);
+
+            // استخراج دو عدد آخر کد ملی
+            const codeSuffix = obj.code.toString().slice(-2);
+
+            // ترکیب تمام بخش‌ها برای تولید یوزرنیم
+            const userName = `${roomPrefix}${randomChars}${codeSuffix}`;
+            const password = userName
+            // اضافه کردن یوزرنیم به آبجکت خروجی
+            obj.userName = userName;
+            obj.password = password;
+            obj.profileId = req.body.profileSelect;
+
+            
+
+
+            await Req.create(obj)
+            res.status(200).json(obj);
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    }
+
+    async confirm(req, res) {
+        try {
+            const id = req.params.id;
+            const request = await Req.findByPk(id);
+            if (!request) {
+                return res.status(404).json({ error: "درخواست مورد نظر پیدا نشد" });
             }
 
-            // تست اتصال با دستور ساده
-            const response = await executeCommand(router, '/ip/address/print');
-            if (!response)
-                res.status(500).json({ message: "اتصال ناموفق" });
-            else
-                res.status(200).json({ message: "اتصال موفق!", output: response });
+            // 1. ابتدا پیامک ارسال شود
+            await sendSms(request.phone, request.family, request.password);
 
+            // 2. سپس درخواست را به API ارسال کنیم
+            const response = await axios.post("http://localhost:5000/api/client", {
+                name: request.userName,
+                username: request.name,
+                password: request.password,
+                fullName: request.family,
+                roomNumber: request.room,
+                profileId: request.profileId,
+                ClientCount: request.count,
+            });
 
+            // 3. اگر همه مراحل موفقیت‌آمیز بود، درخواست از دیتابیس حذف شود
+            await request.destroy();
+
+            return res.status(200).json({ success: true });
         } catch (error) {
-            res.status(500).json({ message: "اتصال ناموفق", error: error.message });
+            return res.status(500).json({ error: error.message });
         }
     }
 
-    async getOne(req, res) {
-        try {
-            const router = await Router.findByPk(req.params.id);
-            if (!router) return res.status(404).json({ error: "روتر پیدا نشد" });
-            res.status(200).json(router);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
+    async doshbourdApi(req, res) {
+        const RemaindCredit = await cahs()
+        
+        res.json({cash:RemaindCredit})
     }
 
     async update(req, res) {
@@ -136,18 +178,10 @@ class reqController {
 
     async delete(req, res) {
         try {
-            const router = await Router.findByPk(req.params.id);
-            if (!router) return res.status(404).json({ error: "روتر پیدا نشد" });
-
-            const respes = await executeCommand(router, `user-manager/limitation/remove [find]`)
-            const resp = await executeCommand(router, `user-manager/profile/remove [find ]`)
-            const respesea = await executeCommand(router, `user-manager/profile-limitation/remove [find]`)
-            const respe = await executeCommand(router, `user-manager/user/remove [find]`)
-            const respese = await executeCommand(router, `user-manager/user-profile/remove [find]`)
-            const hh = await executeCommand(router, `ip/ hotspot/ ip-binding/remove [find]`)
-
-
-            await router.destroy();
+            const id = req.params.id
+            const reqe = await Req.findByPk(id)
+            await sendSms2(request.phone, request.family);
+            await reqe.destroy();
             res.status(200).json({});
         } catch (error) {
             res.status(500).json({ error: error.message });

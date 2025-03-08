@@ -7,6 +7,8 @@ const BlockedClient = require("../model/BlockedClient")
 const Session = require("../model/Session")
 const BlockedMac = require("../model/BlockedMac")
 const Req = require("../model/Req")
+const Admin = require("../model/Admin")
+const AdminActivityLog = require("../model/AdminActivityLog")
 
 async function syncDatabase() {
     await connectDB();

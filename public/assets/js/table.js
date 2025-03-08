@@ -14,6 +14,25 @@ function translateFields(fieldsArray) {
             case "name":
                 persianWord = "نام"
                 break;
+            case "action":
+                persianWord = "فعالیت"
+                break;
+            case "family":
+
+                persianWord = "نام خانوادگی"
+                break;
+            case "code":
+                persianWord = "کد ملی"
+                break;
+            case "room":
+                persianWord = "شماره اتاق"
+                break;
+            case "count":
+                persianWord = "تعداد افراد"
+                break;
+            case "phone":
+                persianWord = "شماره تماس"
+                break;
 
             case "username":
                 persianWord = "نام کاربری"
@@ -382,7 +401,13 @@ function createTrTbody(data, id, api) {
             tbody += `<td class="align-middle text-center text-sm">
                     <button type="button" onClick="addBlockList('${item["callingStationId"]}')" class="badge badge-sm bg-gradient-danger " style="border:none">مسدود کردن کاربر</button>
                     </td></tr>`
-        } else if (id == "table-session" || id == "table-terminated" || id == "table-mousted") {
+        } else if (id == "table-req") {
+            tbody += `<td class="align-middle text-center text-sm">
+                        <button type="button" onClick="confirmReq('${item["id"]}' , '${item["family"]}')" class="badge badge-sm bg-gradient-info " style="border:none">تایید مشخصات</button>
+                    </td><td class="align-middle text-center text-sm">
+                        <button type="button" onClick="removeReq('${item["id"]}' , '${item["family"]}')" class="badge badge-sm bg-gradient-danger " style="border:none">حذف</button>
+                    </td></tr>`
+        } else if (id == "table-session" || id == "table-terminated" || id == "table-mousted" || id =="table-admin") {
             tbody += `</tr>`
         } else if (id == "table-blocked") {
             tbody += `<td class="align-middle text-center text-sm">
@@ -406,8 +431,153 @@ function createTrTbody(data, id, api) {
     tr.innerHTML = tbody
 }
 
+function removeReq(id , name) {
+    const modal = document.createElement("div");
+    modal.id = "modal-overlay";
+    modal.style = `
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0, 0, 0, 0.5); display: flex;
+        align-items: center; justify-content: center; z-index: 10000;
+    `;
+
+    modal.innerHTML = `
+        <div id="modal-overlay" style="
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); display: flex;
+            align-items: center; justify-content: center; z-index: 1000;">
+
+            <div style="
+                background: white; padding: 20px; border-radius: 10px;
+                width: 300px; text-align: center; box-shadow: 0px 4px 10px rgba(0,0,0,0.2);">
+
+                <h4 style="margin-bottom: 10px;font-family=peyda">عملیات حذف اطلاعات </h4>
+                <p>اطلاعات کاربر ${name} را حذف می کنید؟</p>
+                
+                <div i style="margin-top: 20px; display: flex; justify-content: space-between;">
+                    <button id="confirm-delete" style="
+                        background: red; color: white; border: none; padding: 10px;
+                        width: 45%; border-radius: 5px; cursor: pointer;"> حذف</button>
+                    
+                    <button id="cancel-delete" style="
+                        background: gray; color: white; border: none; padding: 10px;
+                        width: 45%; border-radius: 5px; cursor: pointer;">لغو</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    
+    // دکمه‌های تأیید و لغو
+    document.getElementById("confirm-delete").addEventListener("click", async () => {
+        modal.remove(); // حذف مودال بعد از تأیید
+
+        try {
+            const response = await apiRequest(`/rem/${id}`);
+            if (response) {
+                Swal.fire({
+                    title: "عملیات موفق!",
+                    text: `عملیات با موفقیت انجام شد "${name}" `,
+                    icon: "success",
+                    confirmButtonText: "متوجه شدم",
+                    confirmButtonColor: '#43A047',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showClass: { popup: "animate__animated animate__fadeInDown" },
+                    hideClass: { popup: "animate__animated animate__fadeOutUp" }
+                });
+                createTable("جدول پروفایل ها", "client", "table-client")
+                createTable("جدول پروفایل ها", "req", "table-req")
+            }
+        } catch (error) {
+            Swal.fire({
+                title: "خطا!",
+                text: "مشکلی رخ داد. لطفاً دوباره امتحان کنید.",
+                icon: "error",
+                confirmButtonText: "متوجه شدم",
+                confirmButtonColor: '#D32F2F'
+            });
+        }
+    });
+
+    document.getElementById("cancel-delete").addEventListener("click", () => {
+        modal.remove(); // حذف مودال در صورت لغو
+    });
+}
+
+function confirmReq(id ,name) {
+    const modal = document.createElement("div");
+    modal.id = "modal-overlay";
+    modal.style = `
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0, 0, 0, 0.5); display: flex;
+        align-items: center; justify-content: center; z-index: 10000;
+    `;
+
+    modal.innerHTML = `
+        <div id="modal-overlay" style="
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); display: flex;
+            align-items: center; justify-content: center; z-index: 1000;">
+
+            <div style="
+                background: white; padding: 20px; border-radius: 10px;
+                width: 300px; text-align: center; box-shadow: 0px 4px 10px rgba(0,0,0,0.2);">
+
+                <h4 style="margin-bottom: 10px;font-family=peyda">عملیات تایید اطلاعات </h4>
+                <p>اطلاعات کاربر ${name} را تایید می کنید؟</p>
+                
+                <div i style="margin-top: 20px; display: flex; justify-content: space-between;">
+                    <button id="confirm-delete" style="
+                        background: #1A73E8; color: white; border: none; padding: 10px;
+                        width: 45%; border-radius: 5px; cursor: pointer;"> تایید</button>
+                    
+                    <button id="cancel-delete" style="
+                        background: gray; color: white; border: none; padding: 10px;
+                        width: 45%; border-radius: 5px; cursor: pointer;">لغو</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    // دکمه‌های تأیید و لغو
+    document.getElementById("confirm-delete").addEventListener("click", async () => {
+        modal.remove(); // حذف مودال بعد از تأیید
+
+        try {
+            const response = await apiRequest(`/confirm/${id}`);
+            if (response) {
+                Swal.fire({
+                    title: "عملیات موفق!",
+                    text: `عملیات با موفقیت انجام شد "${name}" `,
+                    icon: "success",
+                    confirmButtonText: "متوجه شدم",
+                    confirmButtonColor: '#43A047',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showClass: { popup: "animate__animated animate__fadeInDown" },
+                    hideClass: { popup: "animate__animated animate__fadeOutUp" }
+                });
+                createTable("جدول پروفایل ها", "client", "table-client")
+                createTable("جدول پروفایل ها", "req", "table-req")    
+            }
+        } catch (error) {
+            Swal.fire({
+                title: "خطا!",
+                text: "مشکلی رخ داد. لطفاً دوباره امتحان کنید.",
+                icon: "error",
+                confirmButtonText: "متوجه شدم",
+                confirmButtonColor: '#D32F2F'
+            });
+        }
+    });
+
+    document.getElementById("cancel-delete").addEventListener("click", () => {
+        modal.remove(); // حذف مودال در صورت لغو
+    });
+}
+
 function star(id, status, username) {
-    console.log(id, status);
     let messages;
     if (status)
         messages = `ایا می خواهید ستاره ی ${username} را بگیرید؟`
@@ -511,7 +681,12 @@ function createTrThead(fieldsArray, id) {
             <th class="text-secondary text-xxs font-weight-bolder opacity-7 style="text-align:center"">نمایش تمام فعالیت ها</th>
             <th class="text-secondary text-xxs font-weight-bolder opacity-7 style="text-align:center"">بازگردانی این دیوایس</th>
         `
-    } else if (id == "table-session" || id == "table-terminated" || id == "table-mousted") {
+    } else if (id == "table-req") {
+        tr.innerHTML += `
+            <th class="text-secondary text-xxs font-weight-bolder opacity-7 style="text-align:center"">تایید</th>
+            <th class="text-secondary text-xxs font-weight-bolder opacity-7 style="text-align:center"">خذف</th>
+        `
+    } else if (id == "table-session" || id == "table-terminated" || id == "table-mousted" || id == "table-admin") {
         tr.innerHTML += ``
     } else {
         tr.innerHTML += `
@@ -605,8 +780,26 @@ function translator(data) {
         case "name":
             returnedData = "نام"
             break;
+        case "action":
+            returnedData = "فعالیت"
+            break;
         case "star":
             returnedData = "وضعیت ستاره"
+            break;
+        case "family":
+            returnedData = "نام خانوادگی"
+            break;
+        case "code":
+            returnedData = "کد ملی"
+            break;
+        case "room":
+            returnedData = "شماره اتاق"
+            break;
+        case "count":
+            returnedData = "تعداد افراد"
+            break;
+        case "phone":
+            returnedData = "شماره تماس"
             break;
 
         case "username":
