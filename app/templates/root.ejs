@@ -165,5 +165,49 @@
 </div>
 
 
+<script>
+  function updateDataInformation(){
+      createTable("جدول پروفایل ها" , "active-client" , "table-active")    
+      createTable("جدول پروفایل ها" , "block-mac" , "table-blocked")    
+      createTable("جدول پروفایل ها" , "block-client" , "table-block-client")
+      createTable("جدول پروفایل ها" , "client" , "table-client")
+      createTable("جدول پروفایل ها" , "block-client" , "table-block-client")    
+      createTable("جدول پروفایل ها" , "admin-log" , "table-admin")
+      createTable("جدول پروفایل ها" , "profile" , "table-profile")
+      createTable("جدول محدودیت ها" , "limitation" , "table-limitation")
+      createTable("جدول پروفایل ها" , "req" , "table-req")    
+      createTable("جدول روترها" , "routers" , "table-routers")
+      createTable("جدول پروفایل ها" , "active" , "table-session")    
+      
+      smsPrice()
+      createConnectionRuter()
+      createInputLimitationForm()
+      createInputProfileForm()
+      createInputClientForm()
+      createBlockClient()
+  }
 
+
+  setTimeout(() => {
+            createTable("جدول پروفایل ها" , "active-client" , "table-active")    
+            createTable("جدول پروفایل ها" , "block-mac" , "table-blocked")    
+            createTable("جدول پروفایل ها" , "block-client" , "table-block-client")
+            createTable("جدول پروفایل ها" , "client" , "table-client")
+            createTable("جدول پروفایل ها" , "block-client" , "table-block-client")    
+            createTable("جدول پروفایل ها" , "admin-log" , "table-admin")
+            createTable("جدول پروفایل ها" , "profile" , "table-profile")
+            createTable("جدول محدودیت ها" , "limitation" , "table-limitation")
+            createTable("جدول پروفایل ها" , "req" , "table-req")    
+            createTable("جدول روترها" , "routers" , "table-routers")
+            createTable("جدول پروفایل ها" , "active" , "table-session")    
+            
+            smsPrice()
+            createConnectionRuter()
+            createInputLimitationForm()
+            createInputProfileForm()
+            createInputClientForm()
+            createBlockClient()
+  }, 60 * 10 * 1000);
+
+</script>
 <%- include('./layout/footer'); %>
