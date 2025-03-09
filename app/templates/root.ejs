@@ -1,4 +1,40 @@
 <%- include('./layout/head'); %>
+<div id="loading" style="display: none;">
+        <div class="spinner"></div>
+</div>
+
+ <style>
+        /* استایل مودال */
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        /* استایل انیمیشن چرخشی */
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            border-top: 8px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* تعریف انیمیشن */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+</style>
+
 
 <script>
 
@@ -118,6 +154,9 @@
     });
   </script>
 
+
+
+
 <div id="dashboard">
   <%- include('./dashboard'); %>
 </div>
@@ -165,30 +204,40 @@
 </div>
 
 
+
 <script>
-  function updateDataInformation(){
-      createTable("جدول پروفایل ها" , "active-client" , "table-active")    
-      createTable("جدول پروفایل ها" , "block-mac" , "table-blocked")    
-      createTable("جدول پروفایل ها" , "block-client" , "table-block-client")
-      createTable("جدول پروفایل ها" , "client" , "table-client")
-      createTable("جدول پروفایل ها" , "block-client" , "table-block-client")    
-      createTable("جدول پروفایل ها" , "admin-log" , "table-admin")
-      createTable("جدول پروفایل ها" , "profile" , "table-profile")
-      createTable("جدول محدودیت ها" , "limitation" , "table-limitation")
-      createTable("جدول پروفایل ها" , "req" , "table-req")    
-      createTable("جدول روترها" , "routers" , "table-routers")
-      createTable("جدول پروفایل ها" , "active" , "table-session")    
+  // document.getElementById("loading").style.display = "none";
+ 
+
+  async function updateDataInformation(){
+      document.getElementById("loading").style.display = "flex";
+
+
+     await createTable("جدول پروفایل ها" , "active-client" , "table-active")    
+     await createTable("جدول پروفایل ها" , "block-mac" , "table-blocked")    
+     await createTable("جدول پروفایل ها" , "block-client" , "table-block-client")
+     await createTable("جدول پروفایل ها" , "client" , "table-client")
+     await createTable("جدول پروفایل ها" , "block-client" , "table-block-client")    
+     await createTable("جدول پروفایل ها" , "admin-log" , "table-admin")
+     await createTable("جدول پروفایل ها" , "profile" , "table-profile")
+     await createTable("جدول محدودیت ها" , "limitation" , "table-limitation")
+     await createTable("جدول پروفایل ها" , "req" , "table-req")    
+     await createTable("جدول روترها" , "routers" , "table-routers")
+     await createTable("جدول پروفایل ها" , "active" , "table-session")    
       
-      smsPrice()
-      createConnectionRuter()
-      createInputLimitationForm()
-      createInputProfileForm()
-      createInputClientForm()
-      createBlockClient()
+     await smsPrice()
+     await createConnectionRuter()
+     await createInputLimitationForm()
+     await createInputProfileForm()
+     await createInputClientForm()
+     await createBlockClient()
+    document.getElementById("loading").style.display = "none";
+
   }
 
 
   setTimeout(() => {
+    console.log("update data");
             createTable("جدول پروفایل ها" , "active-client" , "table-active")    
             createTable("جدول پروفایل ها" , "block-mac" , "table-blocked")    
             createTable("جدول پروفایل ها" , "block-client" , "table-block-client")

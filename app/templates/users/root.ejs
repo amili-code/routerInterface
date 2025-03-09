@@ -80,7 +80,7 @@
     </div>
     <div class="input-group input-group-outline mb-3">
         <label class="form-label">شماره اتاق</label>
-        <input type="number" name="room" class="form-control" required>
+        <input type="number" name="room" maxlength="3" class="form-control" required>
     </div>
     <div class="input-group input-group-outline mb-3">
         <label class="form-label">شماره تماس</label>
@@ -138,7 +138,7 @@
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="/assets/js/material-dashboard.min.js?v=3.2.0"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
+  <div id="pazireshNumber"><% paziresh %></div>
 
 <script>
 document.getElementById("forme").addEventListener("submit", async (e) => {
@@ -216,7 +216,7 @@ async function fetchProfiles() {
                 const time = convertTimeToFarsi(limitation.timeLimit);
                 const option = document.createElement('option');
                 option.value = profile.id;
-                option.text = `بازه زمانی: ${time} | قیمت: ${profile.price} تومان | حجم: ${limitation.download}GB | پهنای باند: ${limitation.upload}Mbps | روزها: ${days}`;
+                option.text = `بازه زمانی: ${time} | قیمت: ${profile.price} تومان | حجم: ${limitation.download}GB | پهنای باند: ${limitation.upload}Mbps`;
                 select.appendChild(option);
             }
         });
@@ -231,7 +231,8 @@ async function reqSender(data) {
         const response = await axios.post('http://192.168.1.2:5000/api/req', data);
 
         if (response.status === 200) {
-            alert("اطلاعات با موفقیت ثبت شد. نتیجه به شماره شما ارسال می‌شود.");
+            const numbere = document.getElementById(`pazireshNumber`).textContent
+            alert(`اطلاعات شما ثبت شد. با پذیرش تماس بگیرید \n شماره پذیرش:${numbere}`);
         } else {
             alert("خطا در ثبت اطلاعات.");
         }

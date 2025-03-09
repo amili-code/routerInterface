@@ -3,6 +3,7 @@ const { executeCommand } = require('../command/routerCommand');
 const Profile = require('../model/Profile');
 const Req = require('../model/Req');
 const Client = require('../model/Client');
+const Limitation = require('../model/Limitation');
 const axios = require("axios");
 
 
@@ -16,11 +17,11 @@ function generateRandomChars(length) {
     return result;
 }
 
-async function sendSms(number, family , key) {
-    
+async function sendSms(number, family, key) {
+
     try {
         let url = 'https://portal.amootsms.com/rest/SendSimple';
-        url += '?Token=' + encodeURIComponent(`${process.env.AMOT_TOKEN}`);
+        url += '?Token=' + encodeURIComponent(`D575336A0F6E94716D262B92E709D31144775F77`);
         url += '&SendDateTime=2020-01-01 12:00:00';
         url += '&SMSMessageText=' + encodeURIComponent(`کاربر ${family} اطلاعات شما در سامانه هتل سلام با موفقیت ثبت شد .\n نام کاربری و رمز عبور:${key}`);
         url += '&LineNumber=service';
@@ -38,7 +39,7 @@ async function sendSms2(number, family) {
     console.log(number);
     try {
         let url = 'https://portal.amootsms.com/rest/SendSimple';
-        url += '?Token=' + encodeURIComponent(`${process.env.AMOT_TOKEN}`);
+        url += '?Token=' + encodeURIComponent(`D575336A0F6E94716D262B92E709D31144775F77`);
         url += '&SendDateTime=2020-01-01 12:00:00';
         url += '&SMSMessageText=' + encodeURIComponent(`کاربر ${family} اطلاعات شما در سامانه هتل سلام تایید نشد.`);
         url += '&LineNumber=service';
@@ -116,7 +117,7 @@ class reqController {
             obj.password = password;
             obj.profileId = req.body.profileSelect;
 
-            
+
 
 
             await Req.create(obj)
@@ -137,17 +138,31 @@ class reqController {
             // 1. ابتدا پیامک ارسال شود
             await sendSms(request.phone, request.family, request.password);
 
-            // 2. سپس درخواست را به API ارسال کنیم
-            const response = await axios.post("http://localhost:5000/api/client", {
-                name: request.userName,
-                username: request.name,
-                password: request.password,
-                fullName: request.family,
-                roomNumber: request.room,
-                profileId: request.profileId,
-                ClientCount: request.count,
-            });
+          
+            const name = request.userName
+            const username = request.name
+            const password = request.password
+            const fullName = request.family
+            const roomNumber = request.room
+            const profileId = request.profileId
+            const ClientCount = request.count
 
+
+            const profile = await Profile.findByPk(profileId);
+            if (!profile) return res.status(404).json({ error: "پروفایل مرتبط پیدا نشد" });
+            const limitation = await Limitation.findByPk(profile.limitationId);
+            if (!limitation) return res.status(404).json({ error: "پروفایل مرتبط پیدا نشد" });
+            const router = await Router.findByPk(limitation.routerId)
+            if (!router) return res.status(404).json({ error: "پروفایل مرتبط پیدا نشد" });
+
+            const command = `user-manager/user/add name=${name} password=${password} shared-users=${ClientCount}`
+            const relatedCommand = `user-manager/user-profile/add user=${name} profile=${profile.name}`
+
+            const response = await executeCommand(router, command)
+            const realtedResponse = await executeCommand(router, relatedCommand)
+
+            const user = await Client.create({ name, username, fullName, password, roomNumber, profileId, ClientCount });
+            
             // 3. اگر همه مراحل موفقیت‌آمیز بود، درخواست از دیتابیس حذف شود
             await request.destroy();
 
@@ -159,8 +174,8 @@ class reqController {
 
     async doshbourdApi(req, res) {
         const RemaindCredit = await cahs()
-        
-        res.json({cash:RemaindCredit})
+
+        res.json({ cash: RemaindCredit })
     }
 
     async update(req, res) {

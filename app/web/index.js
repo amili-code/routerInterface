@@ -28,7 +28,7 @@ class Web {
     root(req, res) { this.renderPage(req, res, "root"); }
     mikrotik(req, res) { this.renderPage(req, res, "mikrotik/mikrotik"); }
     about(req, res) { this.renderPage(req, res, "about/about"); }
-    users(req, res) { res.render('users/root') }
+    users(req, res) { res.render('users/root', { paziresh: process.env.PAZIRESH_NUMBER }) }
     login(req, res) { res.render("login/login", {}); }
     // about(req, res) { res.render("about/about", {}); }
     toturial(req, res) { res.render("about/toturial", {}); }
