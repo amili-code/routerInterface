@@ -75,8 +75,7 @@ class Application {
             });
 
             if (process.env.DataBaseCreate === "true") {
-                // syncDatabase()
-                // seedEvents()
+                syncDatabase()
             }
         } catch (error) {
             console.error("❌ خطا در تنظیمات برنامه:", error);

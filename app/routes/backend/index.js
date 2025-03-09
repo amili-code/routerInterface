@@ -25,7 +25,7 @@ const adminController = require("app/api/admin");
 
 router.get('/admin-log', logMiddleware(null), adminController.getAll.bind(adminController))
 router.get('/logout', logMiddleware(`از حساب خود خارج شد`), adminController.logout.bind(adminController))
-router.post('/register',  adminController.register.bind(adminController))
+router.post('/register', adminController.register.bind(adminController))
 router.post('/login', adminController.login.bind(adminController))
 
 

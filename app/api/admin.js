@@ -4,12 +4,11 @@ const Admin = require('../model/Admin');
 const AdminActivityLog = require('../model/AdminActivityLog');
 
 
-
 class adminController {
     async register(req, res) {
         try {
             const { name, password, phoneNumber, nationalCode } = req.body;
-
+            
             // بررسی وجود ادمین با همان شماره تلفن یا کد ملی
             const existingAdmin = await Admin.findOne({
                 where: { phoneNumber }
